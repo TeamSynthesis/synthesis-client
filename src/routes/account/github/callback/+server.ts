@@ -57,7 +57,7 @@ export const GET = async (e: RequestEvent) => {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: "/@",
+          Location: "/@~",
         },
       });
     }

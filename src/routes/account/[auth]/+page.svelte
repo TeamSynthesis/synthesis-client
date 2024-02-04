@@ -40,7 +40,7 @@
 >
   <div class="sm:max-w-[28rem] w-full px-4 flex flex-col gap-6">
     <div class="flex flex-col space-y-2 sm:text-center sm:items-center">
-      <Logo class="h-14 w-14 mb-4" />
+      <Logo class="h-12 w-12 mb-4" />
       <h1 class="text-2xl font-semibold tracking-tight">
         {$page.params.auth === "sign-in"
           ? "Sign in to your account"
