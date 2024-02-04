@@ -121,11 +121,22 @@
       </div>
     </form>
 
-    <a
-      class="a text-left text-sm"
-      href="/account/{$page.params.auth === 'sign-in' ? 'sign-up' : 'sign-in'}"
-      >{$page.params.auth === "sign-in" ? "Dont have" : "Already have"} an account?{" "}</a
-    >
+    <div class="relative">
+      <a
+        class="a text-left text-sm"
+        href="/account/{$page.params.auth === 'sign-in'
+          ? 'sign-up'
+          : 'sign-in'}"
+        >{$page.params.auth === "sign-in" ? "Dont have" : "Already have"} an account?{" "}</a
+      >
+      <a
+        class:hidden={$page.params.auth === "sign-up"}
+        href="/account/forgot-password"
+        class="a absolute -bottom-6 left-0 text-left text-sm"
+      >
+        Forgot password?
+      </a>
+    </div>
     <p class="text-sm h-5 text-left text-destructive">
       {(errorMessage || $errors._errors?.at(0)) ?? ""}
     </p>
