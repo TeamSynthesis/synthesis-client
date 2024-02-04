@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1706984793865,
+      "tag": "0000_messy_marvex",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707001640076,
+      "tag": "0001_absent_mongu",
+      "breakpoints": true
+    }
+  ]
+}
