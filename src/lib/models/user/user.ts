@@ -1,11 +1,25 @@
-import { index, pgTable, varchar, timestamp, char } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  varchar,
+  timestamp,
+  char,
+  pgEnum,
+} from "drizzle-orm/pg-core";
+
+const UserOnboardingProgressEnum = pgEnum("onboarding_progress", [
+  "create-account",
+  "add-account-details",
+  "create-or-join-team",
+  "complete",
+]);
 
 const User = pgTable(
   "user",
   {
     id: char("id", { length: 36 }).primaryKey(),
     email: varchar("email", { length: 255 }).unique().notNull(),
-    createdAt: timestamp("expires_at", {
+    createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "date",
     }).notNull(),
@@ -28,10 +42,13 @@ const User = pgTable(
     avatarUrl: varchar("avatar_url", {
       length: 512,
     }),
-    emailVerifiedAt: timestamp("expires_at", {
+    emailVerifiedAt: timestamp("email_verified_at", {
       withTimezone: true,
       mode: "date",
     }),
+    onboardingProgress: UserOnboardingProgressEnum(
+      "onboarding_progress"
+    ).default("create-account"),
   },
   (t) => ({
     githubIdIdx: index("google_id_idx").on(t.githubId),
@@ -40,4 +57,4 @@ const User = pgTable(
 
 type TUser = typeof User.$inferSelect;
 
-export { type TUser, User };
+export { type TUser, User, UserOnboardingProgressEnum };

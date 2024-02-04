@@ -48,7 +48,7 @@ export const actions = {
             ),
           }),
             await _createSession(e, userId);
-          //TODO: redirect to add details.
+          throw redirect(302, "/account/details");
           break;
 
         case "sign-in":
