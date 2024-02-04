@@ -1,5 +1,5 @@
 import { gitHub } from "$lib/config/auth";
-import { generateCodeVerifier, generateState } from "arctic";
+import { generateState } from "arctic";
 import { redirect } from "@sveltejs/kit";
 import type { RequestEvent } from "@sveltejs/kit";
 import { dev } from "$app/environment";
@@ -9,7 +9,7 @@ export const GET = async (e: RequestEvent) => {
   const action = e.url.searchParams.get("action") ?? "sign-in";
 
   const url = await gitHub.createAuthorizationURL(state, {
-    scopes: ["profile", "email"],
+    scopes: ["profile", "user:email"],
   });
 
   [
@@ -25,5 +25,10 @@ export const GET = async (e: RequestEvent) => {
     });
   });
 
-  redirect(302, url.toString());
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: url.toString(),
+    },
+  });
 };

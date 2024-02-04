@@ -9,29 +9,30 @@ import {
 } from "$env/static/private";
 import { UserSession } from "$lib/models/user/user-session";
 import { User } from "$lib/models/user/user";
-import db from "../db";
+import db, { type DB, type TX } from "../db";
 
-const adapter = new DrizzlePostgreSQLAdapter(db, UserSession, User);
-const auth = new Lucia(adapter, {
-  getUserAttributes: (attributes) => {
-    return {
-      id: attributes.id,
-    };
-  },
-  getSessionAttributes: (attributes) => {
-    return {
-      geoLocation: attributes.geoLocation,
-      createdAt: attributes.createdAt,
-      ipAddress: attributes.ipAddress,
-      userAgent: attributes.userAgent,
-    };
-  },
-  sessionCookie: {
-    attributes: {
-      secure: !dev,
+const initializeAuth = (db: DB | TX) =>
+  new Lucia(new DrizzlePostgreSQLAdapter(db, UserSession, User), {
+    getUserAttributes: (attributes) => {
+      return {
+        id: attributes.id,
+      };
     },
-  },
-});
+    getSessionAttributes: (attributes) => {
+      return {
+        createdAt: attributes.createdAt,
+        ipAddress: attributes.ipAddress,
+        userAgent: attributes.userAgent,
+      };
+    },
+    sessionCookie: {
+      attributes: {
+        secure: !dev,
+      },
+    },
+  });
+
+const auth = initializeAuth(db);
 
 const gitHub = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, {
   redirectURI: GITHUB_REDIRECT_URI,
@@ -39,4 +40,4 @@ const gitHub = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, {
 
 type Auth = typeof auth;
 
-export { auth, gitHub, type Auth };
+export { auth, gitHub, initializeAuth, type Auth };

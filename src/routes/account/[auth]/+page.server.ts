@@ -1,20 +1,25 @@
-import { error, fail, redirect } from "@sveltejs/kit";
+import { error, fail, redirect, isRedirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { superValidate } from "sveltekit-superforms/server";
 import { v4 as uuid } from "uuid";
 import { z } from "zod";
-import db from "$lib/config/db";
+import { type TX, getPooledConnection } from "$lib/config/db";
 import { User } from "$lib/models/user/user";
 import bcrypt from "bcryptjs";
 import logger from "$lib/utils/logger";
-import { auth } from "$lib/config/auth";
+import { auth, initializeAuth } from "$lib/config/auth";
 import { eq } from "drizzle-orm";
 
 const emailAuthSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long" }),
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(1024, { message: "Password must be less than 1024 characters long" })
+    .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/, {
+      message:
+        "Password must contain at least one number, one uppercase letter and one one lowercase letter.",
+    }),
 });
 
 export const load: PageServerLoad = async (e) => {
@@ -30,26 +35,33 @@ export const actions = {
     const form = await superValidate(e, emailAuthSchema);
     const fancyFail = _initializeFancyFail(form);
 
-    if (!form.valid) return fancyFail("Invalid form");
+    if (!form.valid) return fancyFail("Invalid form data");
+    const { pool, db } = getPooledConnection();
 
     try {
+      pool.connect();
       switch (e.params.auth) {
         case "sign-up":
           const userId: string = uuid();
-          await db.insert(User).values({
-            id: userId,
-            email: form.data.email,
-            username: "unset:" + userId,
-            createdAt: new Date(),
-            authProvider: "email",
-            passwordHash: bcrypt.hashSync(
-              form.data.password,
-              bcrypt.genSaltSync(10)
-            ),
-          }),
-            await _createSession(e, userId);
+          await db.transaction(async (tx) => {
+            await Promise.all([
+              tx.insert(User).values({
+                id: userId,
+                email: form.data.email,
+                username: "unset:" + userId,
+                createdAt: new Date(),
+                authProvider: "email",
+                passwordHash: bcrypt.hashSync(
+                  form.data.password,
+                  bcrypt.genSaltSync(10)
+                ),
+              }),
+              _createSession(e, userId, tx),
+            ]).catch((e: any) => {
+              throw e;
+            });
+          });
           throw redirect(302, "/account/details");
-          break;
 
         case "sign-in":
           const user = (
@@ -58,41 +70,56 @@ export const actions = {
               .from(User)
               .where(eq(User.email, form.data.email))
           )[0];
-
           if (
             !user ||
             !user.passwordHash ||
             !bcrypt.compareSync(form.data.password, user.passwordHash)
           )
             return fancyFail("Invalid email or password", 401);
-
           await _createSession(e, user.id);
-          throw redirect(302, "/@");
-          break;
+          throw redirect(302, "/@~");
       }
     } catch (e: any) {
-      if (e?.message.includes("UNIQUE constraint failed: user.email"))
+      if (isRedirect(e)) throw e;
+      if (
+        e?.message?.includes('violates unique constraint "user_email_unique"')
+      )
         return fancyFail("The email address is already in use", 400);
       logger("ERROR", "Error creating user", e);
       return fancyFail("An internal error has occured.  Please try again", 500);
+    } finally {
+      pool.end();
     }
   },
 };
 
-const _initializeFancyFail = (form: any) => {
-  return (message: string, status?: number) =>
-    fail(status ?? 400, {
+export const _initializeFancyFail = (form: any) => {
+  return (message: string, status?: number) => {
+    if (message.includes("email")) form.errors.email = message;
+    if (message.includes("password")) form.errors.password = message;
+    form.errors._errors = [message];
+
+    return fail(status ?? 400, {
       form,
-      message,
     });
+  };
 };
 
-export const _createSession = async (e: any, userId: string) => {
-  const session = await auth.createSession(userId, {
-    createdAt: new Date(),
-    ipAddress: e.getClientAddress(),
-    userAgent: e.request.headers.get("user-agent") ?? null,
-  });
+export const _createSession = async (e: any, userId: string, tx?: TX) => {
+  let _auth = auth;
+  if (tx) _auth = initializeAuth(tx);
+
+  const session = await _auth.createSession(
+    userId,
+    {
+      createdAt: new Date(),
+      ipAddress: e.getClientAddress(),
+      userAgent: e.request.headers.get("user-agent") ?? null,
+    },
+    {
+      sessionId: uuid(),
+    }
+  );
 
   const sessionCookie = auth.createSessionCookie(session.id);
 

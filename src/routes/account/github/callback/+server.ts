@@ -5,7 +5,7 @@ import type { RequestEvent } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { v4 as uuid } from "uuid";
 import logger from "$lib/utils/logger";
-import db from "$lib/config/db";
+import { type TX, getPooledConnection } from "$lib/config/db";
 import { _createSession } from "../../[auth]/+page.server";
 
 export const GET = async (e: RequestEvent) => {
@@ -25,7 +25,10 @@ export const GET = async (e: RequestEvent) => {
   )
     return fancyFail("Something unexpected happened.  Please try again.");
 
+  const { pool, db } = getPooledConnection();
+
   try {
+    pool.connect();
     const tokens: GitHubTokens = await gitHub.validateAuthorizationCode(code);
     const githubUser = await Promise.all([
       fetch("https://api.github.com/user", {
@@ -77,22 +80,35 @@ export const GET = async (e: RequestEvent) => {
 
     const userId: string = uuid();
 
-    await db.insert(User).values({
-      id: userId,
-      email,
-      githubId: githubUser[0].id.toString(),
-      avatarUrl: githubUser[0].avatar_url,
-      username: "unset:" + userId,
-      fullname: githubUser[0].name,
-      createdAt: new Date(),
-      emailVerifiedAt: githubUser[1].find((e) => e.primary && e.verified)
-        ? new Date()
-        : null,
-      authProvider: "github",
+    await db.transaction(async (tx) => {
+      await Promise.all([
+        tx.insert(User).values({
+          id: userId,
+          email,
+          githubId: githubUser[0].id.toString(),
+          avatarUrl: githubUser[0].avatar_url,
+          username: "unset:" + userId,
+          fullname: githubUser[0].name,
+          createdAt: new Date(),
+          emailVerifiedAt: githubUser[1].find((e) => e.primary && e.verified)
+            ? new Date()
+            : null,
+          authProvider: "github",
+        }),
+        _createSession(e, userId, tx),
+      ]).catch((e: any) => {
+        throw e;
+      });
     });
-    await _createSession(e, userId);
-    //TODO: redirect to add details.}
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/account/details",
+      },
+    });
   } catch (e: any) {
+    console.log(e);
     if (e instanceof OAuth2RequestError)
       return fancyFail("Something unexpected happened.  Please try again.");
     logger(
@@ -102,6 +118,7 @@ export const GET = async (e: RequestEvent) => {
     );
     return fancyFail("An internal error occurred.  Please try again later.");
   } finally {
+    pool.end();
     ["gh_oauth_state", "gh_oauth_action"].forEach((c) =>
       e.cookies.delete(c, {
         path: "/",

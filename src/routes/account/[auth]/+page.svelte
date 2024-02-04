@@ -8,32 +8,27 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { Logo } from "$lib/ui/logo";
-  import type { PageData, ActionData } from "./$types";
+  import type { PageData } from "./$types";
   import { superForm } from "sveltekit-superforms/client";
 
   export let data: PageData;
-  export let form: ActionData;
 
-  let isLoading: boolean = false;
   let errorMessage: string = "";
 
   const {
     form: superFormStore,
     errors,
     constraints,
+    delayed,
     enhance,
   } = superForm(data.form, {
+    delayMs: 200,
     taintedMessage: null,
     onSubmit() {
-      isLoading = true;
       errorMessage = "";
-    },
-    onUpdated() {
-      isLoading = false;
     },
   });
 
-  $: if (form?.message) errorMessage = form.message;
   onMount(() => {
     errorMessage = $page.url.searchParams.get("error") ?? "";
     if ($page.url.searchParams.get("error")) goto("?");
@@ -58,6 +53,7 @@
 
     <Button
       data-sveltekit-preload-data="off"
+      data-sveltekit-reload
       href="/account/github?action={$page.params.auth}"
       variant="outline"
       class="shadow-sm"
@@ -89,7 +85,6 @@
               type="email"
               autocomplete="off"
               autocapitalize="none"
-              disabled={isLoading}
               required
             />
           </div>
@@ -105,14 +100,20 @@
               autocapitalize="none"
               autocomplete="off"
               autocorrect="off"
-              disabled={isLoading}
               required
             />
+            <Label
+              class="italic text-muted-foreground leading-4"
+              for="password"
+            >
+              Password must be at least 8 characters long, contain at least 1
+              uppercase letter, 1 lowercase letter, and 1 number.
+            </Label>
           </div>
         </input-group>
 
-        <Button type="submit" class="mt-6" disabled={isLoading}>
-          {#if isLoading}
+        <Button type="submit" class="mt-6" disabled={$delayed}>
+          {#if $delayed}
             <Loader2 class="mr-2 animate-spin h-5 w-5" />
           {/if}
           Continue with email
@@ -126,7 +127,7 @@
       >{$page.params.auth === "sign-in" ? "Dont have" : "Already have"} an account?{" "}</a
     >
     <p class="text-sm h-5 text-left text-destructive">
-      {errorMessage ?? $errors._errors?.at(0)}
+      {(errorMessage || $errors._errors?.at(0)) ?? ""}
     </p>
   </div>
   <p

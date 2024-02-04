@@ -3,7 +3,6 @@ import {
   pgTable,
   varchar,
   timestamp,
-  char,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -17,7 +16,7 @@ const UserOnboardingProgressEnum = pgEnum("onboarding_progress", [
 const User = pgTable(
   "user",
   {
-    id: char("id", { length: 36 }).primaryKey(),
+    id: varchar("id", { length: 64 }).primaryKey(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     createdAt: timestamp("created_at", {
       withTimezone: true,
