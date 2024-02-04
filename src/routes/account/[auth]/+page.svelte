@@ -36,7 +36,7 @@
 </script>
 
 <div
-  class="h-screen overflow-hidden flex flex-col sm:flex-center pt-[20%] sm:pt-0 sm:-mt-10"
+  class="h-screen min-h-screen relative overflow-hidden flex flex-col sm:flex-center pt-[20%] sm:pt-0 sm:-mt-10"
 >
   <div class="sm:max-w-[28rem] w-full px-4 flex flex-col gap-6">
     <div class="flex flex-col space-y-2 sm:text-center sm:items-center">
@@ -142,7 +142,7 @@
     </p>
   </div>
   <p
-    class="absolute bottom-5 px-4 sm:px-8 sm:text-center text-sm text-muted-foreground"
+    class="absolutef bottom-2 px-4 sm:px-8 sm:text-center text-sm text-muted-foreground"
   >
     By continuing, you agree to our{" "}
     <a href="/legal/terms-of-service" class="a"> Terms of Service </a>{" "}
