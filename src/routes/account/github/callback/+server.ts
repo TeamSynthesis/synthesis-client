@@ -76,23 +76,22 @@ export const GET = async (e: RequestEvent) => {
       );
 
     const userId: string = uuid();
-    await db.transaction(async (tx) => {
-      await tx.insert(User).values({
-        id: userId,
-        email,
-        githubId: githubUser[0].id.toString(),
-        avatarUrl: githubUser[0].avatar_url,
-        username: "unset:" + userId,
-        fullname: githubUser[0].name,
-        createdAt: new Date(),
-        emailVerifiedAt: githubUser[1].find((e) => e.primary && e.verified)
-          ? new Date()
-          : null,
-        authProvider: "github",
-      });
-      await _createSession(e, userId);
-      //TODO: redirect to add details.}
+
+    await db.insert(User).values({
+      id: userId,
+      email,
+      githubId: githubUser[0].id.toString(),
+      avatarUrl: githubUser[0].avatar_url,
+      username: "unset:" + userId,
+      fullname: githubUser[0].name,
+      createdAt: new Date(),
+      emailVerifiedAt: githubUser[1].find((e) => e.primary && e.verified)
+        ? new Date()
+        : null,
+      authProvider: "github",
     });
+    await _createSession(e, userId);
+    //TODO: redirect to add details.}
   } catch (e: any) {
     if (e instanceof OAuth2RequestError)
       return fancyFail("Something unexpected happened.  Please try again.");

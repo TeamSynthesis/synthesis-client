@@ -32,54 +32,49 @@ export const actions = {
 
     if (!form.valid) return fancyFail("Invalid form");
 
-    switch (e.params.auth) {
-      case "sign-up":
-        const userId: string = uuid();
-        await db.transaction(async (tx) => {
-          try {
-            await tx.insert(User).values({
-              id: userId,
-              email: form.data.email,
-              username: "unset:" + userId,
-              createdAt: new Date(),
-              authProvider: "email",
-              passwordHash: bcrypt.hashSync(
-                form.data.password,
-                bcrypt.genSaltSync(10)
-              ),
-            }),
-              await _createSession(e, userId);
-            //TODO: redirect to add details.
-          } catch (e: any) {
-            if (e?.message.includes("UNIQUE constraint failed: user.email"))
-              return fancyFail("The email address is already in use", 400);
-            logger("ERROR", "Error creating user", e);
-            return fancyFail(
-              "An internal error has occured.  Please try again",
-              500
-            );
-          }
-        });
-        break;
+    try {
+      switch (e.params.auth) {
+        case "sign-up":
+          const userId: string = uuid();
+          await db.insert(User).values({
+            id: userId,
+            email: form.data.email,
+            username: "unset:" + userId,
+            createdAt: new Date(),
+            authProvider: "email",
+            passwordHash: bcrypt.hashSync(
+              form.data.password,
+              bcrypt.genSaltSync(10)
+            ),
+          }),
+            await _createSession(e, userId);
+          //TODO: redirect to add details.
+          break;
 
-      case "sign-in":
-        const user = (
-          await db
-            .select({ id: User.id, passwordHash: User.passwordHash })
-            .from(User)
-            .where(eq(User.email, form.data.email))
-        )[0];
+        case "sign-in":
+          const user = (
+            await db
+              .select({ id: User.id, passwordHash: User.passwordHash })
+              .from(User)
+              .where(eq(User.email, form.data.email))
+          )[0];
 
-        if (
-          !user ||
-          !user.passwordHash ||
-          !bcrypt.compareSync(form.data.password, user.passwordHash)
-        )
-          return fancyFail("Invalid email or password", 401);
+          if (
+            !user ||
+            !user.passwordHash ||
+            !bcrypt.compareSync(form.data.password, user.passwordHash)
+          )
+            return fancyFail("Invalid email or password", 401);
 
-        await _createSession(e, user.id);
-        throw redirect(302, "/@");
-        break;
+          await _createSession(e, user.id);
+          throw redirect(302, "/@");
+          break;
+      }
+    } catch (e: any) {
+      if (e?.message.includes("UNIQUE constraint failed: user.email"))
+        return fancyFail("The email address is already in use", 400);
+      logger("ERROR", "Error creating user", e);
+      return fancyFail("An internal error has occured.  Please try again", 500);
     }
   },
 };
