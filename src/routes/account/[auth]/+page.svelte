@@ -142,7 +142,7 @@
     </p>
   </div>
   <p
-    class="absolutef bottom-2 px-4 sm:px-8 sm:text-center text-sm text-muted-foreground"
+    class="absolutef bottom-2 translate-y-12 px-4 sm:px-8 sm:text-center text-sm text-muted-foreground"
   >
     By continuing, you agree to our{" "}
     <a href="/legal/terms-of-service" class="a"> Terms of Service </a>{" "}

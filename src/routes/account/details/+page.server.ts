@@ -1,18 +1,12 @@
 import { error, fail, redirect, isRedirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { superValidate } from "sveltekit-superforms/server";
-
-import { v4 as uuid } from "uuid";
 import { z } from "zod";
-import db from "$lib/config/db";
-import { User } from "$lib/models/user/user";
-import bcrypt from "bcryptjs";
 import logger from "$lib/utils/logger";
-import { auth, initializeAuth } from "$lib/config/auth";
-import { eq } from "drizzle-orm";
 import { _initializeFancyFail } from "../[auth]/+page.server";
 
 const accountDetailsSchema = z.object({
+  avatarUrl: z.string().optional(),
   fullname: z.string().min(2).max(64),
   username: z
     .string()
@@ -22,10 +16,23 @@ const accountDetailsSchema = z.object({
     .regex(/^[a-z0-9-]+$/, {
       message: "Username can only contain letters, numbers & hyphens.",
     }),
+  profession: z
+    .string()
+    .min(2, { message: "Profession must be at least 2 characters long" })
+    .max(64, { message: "Profession must be less than 64 characters long" }),
 });
 
 export const load: PageServerLoad = async (e) => {
   const form = await superValidate(e, accountDetailsSchema);
+  const { userProfile } = await e.parent();
+  if (!userProfile) throw redirect(302, "/account/sign-in");
+
+  form.data.fullname = userProfile.fullname ?? "";
+  form.data.username = userProfile.username.includes("unset:")
+    ? ""
+    : userProfile.username;
+  form.avatarUrl = userProfile.avatarUrl ?? "";
+
   return {
     form,
   };

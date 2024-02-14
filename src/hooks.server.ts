@@ -30,4 +30,4 @@ const useAuth: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(useAuth);
+// export const handle: Handle = sequence(useAuth);

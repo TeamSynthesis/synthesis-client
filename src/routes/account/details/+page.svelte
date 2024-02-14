@@ -5,6 +5,10 @@
   import { Loader2 } from "lucide-svelte";
   import type { PageData } from "./$types";
   import { superForm } from "sveltekit-superforms/client";
+  import { Progress } from "$lib/ui/progress";
+  import * as Avatar from "$lib/ui/avatar";
+  import * as Select from "$lib/ui/select";
+  import { PROFESSIONS } from "$lib/consts";
 
   export let data: PageData;
 
@@ -18,6 +22,8 @@
     delayMs: 200,
     taintedMessage: null,
   });
+
+  let page: number = 1;
 </script>
 
 <div
@@ -25,7 +31,14 @@
 >
   <div class="sm:max-w-[28rem] w-full px-4 flex flex-col gap-6">
     <div class="flex flex-col space-y-2 sm:text-center sm:items-center">
-      <h1 class="text-2xl font-semibold tracking-tight">Account details</h1>
+      <div class="w-full flex flex-col mb-2">
+        <Label for="progress" class="text-right w-full mb-2 -translate-x-2"
+          >{page}/3</Label
+        >
+        <Progress id="progress" value={(page / 3) * 100} />
+      </div>
+
+      <h1 class="text-2xl font-semibold tracking-tight">Basic information</h1>
       <p class="text-sm text-muted-foreground">
         Let's get some basic details to get started.
       </p>
@@ -34,6 +47,16 @@
     <form use:enhance method="post">
       <div class="grid gap-2">
         <input-group class="space-y-3">
+          <div class="flex-center flex-col mb-4">
+            <Avatar.Root class="h-20  w-20">
+              <Avatar.Image
+                src={$superFormStore.avatarUrl}
+                alt="@user:{$superFormStore.username}"
+              />
+              <Avatar.Fallback>CN</Avatar.Fallback>
+            </Avatar.Root>
+            <Button variant="ghost" size="sm">Change avatar</Button>
+          </div>
           <div class="grid gap-1">
             <Label for="username">Username</Label>
             <Input
@@ -69,6 +92,40 @@
               required
               autocorrect="off"
             />
+          </div>
+          <div class="grid gap-1">
+            <Label for="profession">What do you do?</Label>
+            <Select.Root selected={$superFormStore.profession}>
+              <Select.Trigger class="w-full">
+                <Select.Value placeholder="Please choose ..." />
+              </Select.Trigger>
+              <Select.Content>
+                {#each PROFESSIONS as p}
+                  <Select.Item value={p}>p</Select.Item>
+                {/each}
+                <Select.Item value="Other">Other</Select.Item>
+              </Select.Content>
+              <Select.Value />
+            </Select.Root>
+
+            <Input
+              bind:value={$superFormStore.fullname}
+              {...$constraints.fullname}
+              id="profession"
+              name="profession"
+              placeholder="Please choose ..."
+              type="text"
+              autocapitalize="none"
+              autocomplete="off"
+              required
+              autocorrect="off"
+            />
+            <Label
+              class="italic text-muted-foreground leading-4"
+              for="profession"
+            >
+              You can always change this later
+            </Label>
           </div>
         </input-group>
 
