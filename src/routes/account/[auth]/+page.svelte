@@ -10,6 +10,7 @@
   import { Logo } from "$lib/ui/logo";
   import type { PageData } from "./$types";
   import { superForm } from "sveltekit-superforms/client";
+  import { twMerge } from "tailwind-merge";
 
   export let data: PageData;
 
@@ -36,7 +37,7 @@
 </script>
 
 <div
-  class="h-screen min-h-screen relative overflow-hidden flex flex-col sm:flex-center pt-[20%] sm:pt-0 sm:-mt-10"
+  class="h-screen min-h-screen relative overflow-hidden flex flex-col sm:flex-center pt-[20%] sm:pt-0 md:-mt-10"
 >
   <div class="sm:max-w-[28rem] w-full px-4 flex flex-col gap-6">
     <div class="flex flex-col space-y-2 sm:text-center sm:items-center">
@@ -75,7 +76,11 @@
       <div class="grid gap-2">
         <input-group class="space-y-3">
           <div class="grid gap-1">
-            <Label for="email">Email</Label>
+            <Label
+              for="email"
+              class={twMerge("text-destructive-foreground" && $errors.email)}
+              >Email</Label
+            >
             <Input
               bind:value={$superFormStore.email}
               {...$constraints.email}
@@ -92,7 +97,7 @@
             <Label for="password">Password</Label>
             <Input
               bind:value={$superFormStore.password}
-              {...$constraints.password}
+              {...$page.params.auth == "sign-up" ? $constraints.password : {}}
               id="password"
               name="password"
               placeholder="••••••••"
@@ -103,7 +108,10 @@
               required
             />
             <Label
-              class="italic text-muted-foreground leading-4"
+              class={twMerge(
+                "italic text-muted-foreground leading-4",
+                $page.params.auth == "sign-in" && "hidden"
+              )}
               for="password"
             >
               Password must be at least 8 characters long, contain at least 1
@@ -137,7 +145,7 @@
         Forgot password?
       </a>
     </div>
-    <p class="text-sm h-5 text-left text-destructive">
+    <p class="text-sm h-5 mt-2 text-left text-destructive">
       {(errorMessage || $errors._errors?.at(0)) ?? ""}
     </p>
   </div>

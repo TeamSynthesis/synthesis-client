@@ -1,14 +1,16 @@
-{"tailwindCSS.includeLanguages": {
-  "html": "html",
-  "javascript": "javascript",
-  "css": "css",
-  "svelte": "html",
-},
-"prettier.printWidth": 80,
-"editor.quickSuggestions": {
-  "strings": true
-},
-"[svelte]":{
-  "editor.defaultFormatter": "svelte.svelte-vscode"
-},
+{
+  "tailwindCSS.includeLanguages": {
+    "html": "html",
+    "javascript": "javascript",
+    "css": "css",
+    "svelte": "html",
+  },
+  "prettier.printWidth": 80,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  "files.autoSave": "onFocusChange",
 }
