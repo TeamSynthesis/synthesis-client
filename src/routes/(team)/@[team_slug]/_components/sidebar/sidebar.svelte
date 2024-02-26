@@ -59,9 +59,10 @@
   >
     <Button
       size="icon"
+      on:click={() => ($dashboardState.isNewProjectModalOpen = true)}
       class={cn(!$dashboardState.isSidebarCollapsed && "w-full")}
     >
-      <Plus class={!$dashboardState.isSidebarCollapsed ? "mr-1" : ""} />
+      <Plus class={!$dashboardState.isSidebarCollapsed ? "w-4 h-4 mr-1" : ""} />
       {!$dashboardState.isSidebarCollapsed ? "New project" : ""}
     </Button>
   </div>
