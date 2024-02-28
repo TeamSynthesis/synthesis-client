@@ -1,13 +1,9 @@
 <script lang="ts">
-  import { Button } from "$lib/ui/button";
-  import { Input } from "$lib/ui/input";
-  import { Label } from "$lib/ui/label";
-  import { Loader2 } from "lucide-svelte";
+  import { page } from "$app/stores";
   import type { PageData } from "./$types";
   import { superForm } from "sveltekit-superforms/client";
-  import { Progress } from "$lib/ui/progress";
-  import * as Avatar from "$lib/ui/avatar";
   import Basic from "./_components/pages/basic.svelte";
+  import Skills from "./_components/pages/skills.svelte";
 
   export let data: PageData;
 
@@ -15,8 +11,10 @@
     delayMs: 200,
     taintedMessage: null,
   });
-
-  let page: number = 1;
 </script>
 
-<Basic {superformConfig} />
+{#if $page.params.details_page === "basic"}
+  <Basic {superformConfig} />
+{:else if $page.params.details_page === "skills"}
+  <Skills {superformConfig} />
+{/if}

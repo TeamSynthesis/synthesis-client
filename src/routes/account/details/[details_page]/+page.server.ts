@@ -20,14 +20,14 @@ const accountBasicDetailsSchema = z.object({
     .max(64, { message: "Profession must be less than 64 characters long" }),
 });
 
-
 export const load: PageServerLoad = async (e) => {
-  if (!["basic", "skills", "finalize"].includes(e.params.details_page)) redirect(302, "/account/details/basic")
+  if (!["basic", "skills", "finalize"].includes(e.params.details_page))
+    redirect(302, "/account/details/basic");
 
   const form = await superValidate(e, accountBasicDetailsSchema);
 
   //TODO: Check user onboarding_stage and redirect to appropriate if stage
-  //is not 
+  //is not
   //a) basic-info
   //b) skills
   //c) ...
@@ -45,9 +45,13 @@ export const actions = {
       form.errors._errors = ["Invalid form data"];
       return fail(400, {
         form,
-      })
-    };
+      });
+    }
 
-    redirect(302, "/account/details/skills")
+    await new Promise((resolve, _) => {
+      setTimeout(resolve, 1000);
+    });
+
+    redirect(302, "/account/details/skills");
   },
 };

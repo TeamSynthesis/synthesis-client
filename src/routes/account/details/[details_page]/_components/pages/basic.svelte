@@ -6,7 +6,7 @@
   import { superForm, type SuperForm } from "sveltekit-superforms/client";
   import * as Avatar from "$lib/ui/avatar";
 
-  export let superformConfig: SuperForm<PageData>;
+  export let superformConfig: any;
 
   const {
     form: superFormStore,
