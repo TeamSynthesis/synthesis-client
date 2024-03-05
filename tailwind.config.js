@@ -1,4 +1,7 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
+import c from "tailwindcss/colors"
+
+c.indigo["600"]
 
 /** @type {import('tailwindcss').Config} */
 const config = {

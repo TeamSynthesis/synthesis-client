@@ -9,6 +9,8 @@
     BookText,
     Megaphone,
     LayoutDashboard,
+    SidebarClose,
+    SidebarOpen,
   } from "lucide-svelte";
   import TeamSwitcher from "./team-switcher.svelte";
   import Nav from "./nav.svelte";
@@ -144,9 +146,9 @@
     variant="outline"
   >
     {#if $dashboardState.isSidebarCollapsed}
-      <ChevronsRight />
+      <SidebarOpen class="h-4 w-4" />
     {:else}
-      <ChevronsLeft />
+      <SidebarClose class="h-4 w-4" />
     {/if}
   </Button>
 </aside>
