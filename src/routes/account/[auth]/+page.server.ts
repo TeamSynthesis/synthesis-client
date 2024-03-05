@@ -1,7 +1,9 @@
-import { error, fail } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { superValidate } from "sveltekit-superforms/server";
 import { z } from "zod";
+import { dev } from "$app/environment";
+import signUp from "$lib/services/account/sign-up";
 
 const emailAuthSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,12 +34,29 @@ export const actions = {
       form.errors._errors = ["Invalid username or password"];
       return fail(400, {
         form,
-      })
-    };
+      });
+    }
 
     switch (e.params.auth) {
       case "sign-up":
+        const result = await signUp(form.data.email, form.data.password);
+
+        if (result.err) {
+          form.errors._errors = [result.val];
+          return fail(400, {
+            form,
+          });
+        }
+        setSessionCookie(e, result.val);
+        throw redirect(301, "/account/details/basic");
       case "sign-in":
     }
-  }
+  },
+};
+
+const setSessionCookie = async (e: RequestEvent, token: string) => {
+  e.cookies.set("auth_token", token, {
+    path: ".",
+    secure: !dev,
+  });
 };
