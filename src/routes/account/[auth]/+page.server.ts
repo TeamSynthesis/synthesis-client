@@ -47,16 +47,24 @@ export const actions = {
             form,
           });
         }
-        setSessionCookie(e, result.val);
+        setSessionCookies(e, result.val.token, result.val.userId);
         throw redirect(301, "/account/details/basic");
       case "sign-in":
     }
   },
 };
 
-const setSessionCookie = async (e: RequestEvent, token: string) => {
+const setSessionCookies = async (
+  e: RequestEvent,
+  token: string,
+  userId: string
+) => {
+  e.cookies.set("u_id", userId, {
+    path: "/",
+    secure: !dev,
+  });
   e.cookies.set("auth_token", token, {
-    path: ".",
+    path: "/",
     secure: !dev,
   });
 };

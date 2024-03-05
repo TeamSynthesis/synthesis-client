@@ -1,11 +1,15 @@
 import { BASE_API_URL } from "$env/static/private";
+import type { RequestEvent } from "@sveltejs/kit";
 
 import tsr from "ts-results";
 const { Ok, Err } = tsr;
 
-const signUp = async (
-  email: string,
-  password: string
+type User= {
+    id:string;
+}
+
+const getUser = async (
+    userId:string;
 ): Promise<
   import("ts-results").Result<{ token: string; userId: string }, string>
 > => {

@@ -1,4 +1,3 @@
-import { User } from "$lib/models/user/user";
 import { eq } from "drizzle-orm";
 import type { LayoutServerLoad } from "./$types";
 import logger from "$lib/utils/logger";
@@ -6,49 +5,46 @@ import { error } from "@sveltejs/kit";
 import type { Provider, UserProfile } from "$lib/types";
 import db from "$lib/config/db";
 
-import tsr from "ts-results";
+import tsr, { type Result } from "ts-results";
+import { BASE_API_URL } from "$env/static/private";
 const { Ok, Err } = tsr;
 
 export const load: LayoutServerLoad = async (e) => {
   return {
-    userProfile: !e.locals.user
-      ? null
-      : (await getUserProfile({ userId: e.locals.user.id }))
-          .mapErr((e) => {
-            if (e === "internal_error") throw error(500, e);
-          })
-          .unwrapOr(null),
+    userProfile: (await getUserProfile(e))
+      .mapErr((e) => {
+        if (e === "internal_error") throw error(500, e);
+        throw error(500, e);
+      })
+      .unwrapOr(null),
   };
 };
 
-const getUserProfile: Provider<
-  { userId: string },
-  UserProfile,
-  "internal_error" | "user_not_found"
-> = async ({ userId }) => {
+type User = {
+  id: string;
+  emailConfirmed: boolean;
+  email: string;
+  skills: string[];
+  memberProfiles: string[];
+};
+
+const getUserProfile = async (e: any): Promise<Result<User, string>> => {
   try {
-    const user: UserProfile | null =
-      (
-        await db
-          .select({
-            id: User.id,
-            email: User.email,
-            createdAt: User.createdAt,
-            fullname: User.fullname,
-            username: User.username,
-            avatarUrl: User.avatarUrl,
-            onboardingProgress: User.onboardingProgress,
-          })
-          .from(User)
-          .where(eq(User.id, userId))
-      )[0] ?? null;
+    const userId = e.cookies.get("u_id");
+    const token = e.cookies.get("auth_token");
 
-    if (!user) return Err("user_not_found");
+    if (!userId || !token) return Err("User not logged in");
+    const result = await fetch(BASE_API_URL + "/Users/" + userId, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }).then((res) => res.json());
 
-    console.log(user);
-    return Ok(user);
-  } catch (e: any) {
-    logger("ERROR", "Failed to fetch userProfile", e);
-    return Err("internal_error");
+    if (!result.isSuccess) return Err(result.errors[0]);
+
+    return Ok(result.data);
+  } catch {
+    return Err("An unexpected error occured.  Try again later");
   }
 };
