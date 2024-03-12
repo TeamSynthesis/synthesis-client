@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async (e) => {
     userProfile: (await getUserProfile(e))
       .mapErr((e) => {
         if (e === "internal_error") throw error(500, e);
-        throw error(500, e);
+        // throw error(500, e);
       })
       .unwrapOr(null),
   };
