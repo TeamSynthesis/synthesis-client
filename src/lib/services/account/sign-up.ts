@@ -18,6 +18,7 @@ const signUp = async (
       method: "POST",
       body: formData,
     }).then((res) => res.json());
+    console.log(result)
 
     if (!result.isSuccess) return Err(result.errors[0]);
     return Ok({ token: result.data.token, userId: result.data.user.id });
@@ -26,5 +27,6 @@ const signUp = async (
     return Err("An unknown error occured.  Please try again later");
   }
 };
+
 
 export default signUp;

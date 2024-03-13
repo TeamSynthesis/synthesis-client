@@ -16,5 +16,5 @@
 {#if $page.params.details_page === "basic"}
   <Basic {superformConfig} />
 {:else if $page.params.details_page === "skills"}
-  <Skills {superformConfig} />
+  <Skills />
 {/if}

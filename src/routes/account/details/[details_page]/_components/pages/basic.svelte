@@ -3,10 +3,11 @@
   import { Input } from "$lib/ui/input";
   import { Label } from "$lib/ui/label";
   import { Loader2 } from "lucide-svelte";
-  import { superForm, type SuperForm } from "sveltekit-superforms/client";
   import * as Avatar from "$lib/ui/avatar";
 
   export let superformConfig: any;
+  let file: HTMLInputElement;
+  let fileUploadStatus: "loading" | "success" | "error";
 
   const {
     form: superFormStore,
@@ -15,6 +16,49 @@
     delayed,
     enhance,
   } = superformConfig;
+
+  const onAvatarChosen = async (event: Event): Promise<void> => {
+    const inputElement = event.currentTarget as HTMLInputElement;
+    const files = inputElement.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      const fileSizeInMB = file.size / (1024 * 1024);
+
+      if (fileSizeInMB > 3) {
+        alert("Avatar file size exceeds 3MB. Please choose a smaller file.");
+      }
+      fileUploadStatus = "loading";
+
+      const form = new FormData();
+      form.append("file", file);
+
+      const result: APIResponse = await fetch(
+        "/api/upload-file?filename=" + file.name,
+        {
+          method: "POST",
+          body: form,
+        }
+      )
+        .then((r) => r.json())
+        .catch(
+          () =>
+            ($errors._errors = [
+              "An unexpected error occured uploading your avatar.  Try again",
+            ])
+        );
+
+      if (result.isSuccess) {
+        fileUploadStatus = "success";
+        $superFormStore.avatarUrl = result.data.url;
+      } else {
+        fileUploadStatus = "error";
+        $errors._errors = result.errors;
+      }
+    }
+  };
+
+  $: console.log($superFormStore.avatarUrl);
 </script>
 
 <h1 class="text-2xl font-semibold tracking-tight">Basic information</h1>
@@ -22,18 +66,36 @@
   Let's get some basic details to get started.
 </p>
 
+<input
+  type="file"
+  bind:this={file}
+  on:change={onAvatarChosen}
+  class="hidden"
+  name="avatar"
+  id="avatar"
+/>
+
 <form use:enhance method="post">
   <div class="grid gap-2">
     <input-group class="flex flex-col text-left space-y-3">
       <div class="flex-center flex-col mb-4">
-        <Avatar.Root class="h-20  w-20">
+        <Avatar.Root id="avatar" class="h-20  w-20">
           <Avatar.Image
             src={$superFormStore.avatarUrl}
             alt="@user:{$superFormStore.username}"
           />
-          <Avatar.Fallback>CN</Avatar.Fallback>
+          <Avatar.Fallback>
+            {#if fileUploadStatus === "loading"}
+              <Loader2 class="h-4 w-4 animate-spin duration-150 text-primary" />
+            {:else}
+              CN
+            {/if}
+          </Avatar.Fallback>
         </Avatar.Root>
-        <Button variant="ghost" size="sm">Change avatar</Button>
+
+        <Button variant="ghost" on:click={() => file.click()} size="sm"
+          >Change avatar</Button
+        >
       </div>
       <div class="grid gap-1">
         <Label for="username">Username</Label>

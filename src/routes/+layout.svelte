@@ -12,10 +12,10 @@
   import "@fontsource/inter/900.css";
 
   import user from "$lib/stores/user";
+
   export let data;
 
   $user = data.userProfile;
-  console.log(data);
 </script>
 
 <slot />

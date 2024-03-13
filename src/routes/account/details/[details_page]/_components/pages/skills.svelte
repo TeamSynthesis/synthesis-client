@@ -1,25 +1,21 @@
 <script lang="ts">
   import { Button } from "$lib/ui/button";
-  import { Input } from "$lib/ui/input";
-  import { Textarea } from "$lib/ui/textarea";
   import { Label } from "$lib/ui/label";
   import { Loader2 } from "lucide-svelte";
-  import { superForm, type SuperForm } from "sveltekit-superforms/client";
-  import * as Avatar from "$lib/ui/avatar";
   import { TECH_CATEGORIES, TECHNOLOGIES } from "$lib/consts/technologies";
   import { twMerge } from "tailwind-merge";
+  import { enhance } from "$app/forms";
 
-  export let superformConfig: any;
-
-  const {
-    form: superFormStore,
-    errors,
-    constraints,
-    delayed,
-    enhance,
-  } = superformConfig;
+  let loading: boolean = false;
 
   $: selected = [] as string[];
+
+  const onSubmit = () => {
+    loading = true;
+    return () => {
+      loading = false;
+    };
+  };
 </script>
 
 <h1 class="text-2xl font-semibold tracking-tight">What are your skills ?</h1>
@@ -29,7 +25,14 @@
   > so far.
 </p>
 
-<form use:enhance method="post" class="w-full">
+<form use:enhance={onSubmit} method="POST" class="w-full">
+  <input
+    type="text"
+    id="skills"
+    name="skills"
+    bind:value={selected}
+    class="hidden"
+  />
   <div class="grid gap-2">
     <input-group class="flex flex-col text-left space-y-3">
       <div
@@ -82,8 +85,8 @@
       </div>
     </input-group>
 
-    <Button type="submit" class="mt-6" disabled={$delayed}>
-      {#if $delayed}
+    <Button type="submit" class="mt-6" disabled={loading}>
+      {#if loading}
         <Loader2 class="mr-2 animate-spin h-5 w-5" />
       {/if}
       Continue

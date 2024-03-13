@@ -1,7 +1,9 @@
 import { fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { superValidate } from "sveltekit-superforms/server";
-import { z } from "zod";
+import { string, z } from "zod";
+import setUserBasicDetails from "$lib/services/user/set-user-basic-details";
+import setUserSkills from "$lib/services/user/set-user-skills";
 
 const accountBasicDetailsSchema = z.object({
   avatarUrl: z.string().optional(),
@@ -20,11 +22,20 @@ const accountBasicDetailsSchema = z.object({
     .max(64, { message: "Profession must be less than 64 characters long" }),
 });
 
+
 export const load: PageServerLoad = async (e) => {
   if (!["basic", "skills", "finalize"].includes(e.params.details_page))
     redirect(302, "/account/details/basic");
 
+
+
   const form = await superValidate(e, accountBasicDetailsSchema);
+  const userProfile = (await e.parent()).userProfile
+  if (!userProfile) throw redirect(302, "/account/sign-in")
+
+  // form.data.avatarUrl = userProfile.
+
+  //todo check if user is signed in to start with
 
   //TODO: Check user onboarding_stage and redirect to appropriate if stage
   //is not
@@ -39,13 +50,35 @@ export const load: PageServerLoad = async (e) => {
 
 export const actions = {
   default: async (e: RequestEvent) => {
-    const form = await superValidate(e, accountBasicDetailsSchema);
 
-    if (!form.valid) {
-      form.errors._errors = ["Invalid form data"];
-      return fail(400, {
-        form,
-      });
+    switch (e.params.details_page) {
+      case "basic":
+        const form = await superValidate(e, accountBasicDetailsSchema);
+
+        if (!form.valid) {
+          form.errors._errors = ["Invalid form data"];
+          return fail(400, {
+            form,
+          });
+        }
+        const response = await setUserBasicDetails(e.cookies.get("u_id") ?? "", e.cookies.get("auth_token") ?? "", {
+          FullName: form.data.fullname,
+          Profession: form.data.profession,
+          UserName: form.data.username
+        })
+
+        if (response.ok) throw redirect(302, "/account/details/skills")
+        else {
+
+          form.errors._errors = [response.val];
+          return fail(400, {
+            form,
+          });
+        }
+      case "skills":
+        const r = await setUserSkills(e.cookies.get("u_id") ?? "", e.cookies.get("auth_token") ?? "", (await e.request.formData()).get("skills")?.toString() ?? "")
+
+        if (r.ok === true) throw redirect(302, "/account/details/finalize")
     }
 
     await new Promise((resolve, _) => {

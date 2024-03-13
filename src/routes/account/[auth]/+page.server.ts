@@ -2,8 +2,8 @@ import { error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { superValidate } from "sveltekit-superforms/server";
 import { z } from "zod";
-import { dev } from "$app/environment";
 import signUp from "$lib/services/account/sign-up";
+import setSessionCookies from "../_helpers/set-session-cookies";
 
 const emailAuthSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -54,17 +54,3 @@ export const actions = {
   },
 };
 
-const setSessionCookies = async (
-  e: RequestEvent,
-  token: string,
-  userId: string
-) => {
-  e.cookies.set("u_id", userId, {
-    path: "/",
-    secure: !dev,
-  });
-  e.cookies.set("auth_token", token, {
-    path: "/",
-    secure: !dev,
-  });
-};
