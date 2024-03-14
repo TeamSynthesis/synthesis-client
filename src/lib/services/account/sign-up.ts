@@ -21,7 +21,7 @@ const signUp = async (
     console.log(result)
 
     if (!result.isSuccess) return Err(result.errors[0]);
-    return Ok({ token: result.data.token, userId: result.data.user.id });
+    return Ok({ token: result.data.token, userId: result.data.userId });
   } catch (e) {
     console.error(e);
     return Err("An unknown error occured.  Please try again later");

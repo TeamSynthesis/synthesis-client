@@ -1,4 +1,30 @@
-<div class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-6">
+<script lang="ts">
+  import { Button } from "$lib/ui/button";
+  import { Input } from "$lib/ui/input";
+  import { Label } from "$lib/ui/label";
+  import { Textarea } from "$lib/ui/textarea";
+  import { Loader2 } from "lucide-svelte";
+  import { pages } from "..";
+  import { enhance } from "$app/forms";
+  import type { SubmitFunction } from "@sveltejs/kit";
+
+  export let changePage: (page: keyof typeof pages) => void;
+
+  let loading: boolean = false;
+
+  const submit: SubmitFunction = (e) => {
+    loading = true;
+    return (p) => {
+      // p.result
+      loading = false;
+    };
+  };
+</script>
+
+<form
+  use:enhance={submit}
+  class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-6"
+>
   <input-group class="space-y-3">
     <div class="grid gap-1">
       <Label for="name">Name</Label>
@@ -33,23 +59,19 @@
       </Label>
     </div>
   </input-group>
-</div>
+</form>
 
-<div class="flex gap-2 justify-end mt-3" slot="footer">
-  {#if page === "ai"}
-    <Button
-      variant="outline"
-      type="submit"
-      on:click={() => {
-        page = createProjectFrom;
-      }}>Back</Button
-    >
+<div class="flex gap-2 justify-end mt-3 -mb-4">
+  <Button variant="outline" type="submit">Back</Button>
 
-    <Button type="submit" disabled={loading}>
-      {#if loading}
-        <Loader2 class="mr-2 animate-spin h-5 w-5" />
-      {/if}
-      Create project
-    </Button>
-  {/if}
+  <Button
+    type="submit"
+    on:click={() => changePage("initial")}
+    disabled={loading}
+  >
+    {#if loading}
+      <Loader2 class="mr-2 animate-spin h-5 w-5" />
+    {/if}
+    Create project
+  </Button>
 </div>

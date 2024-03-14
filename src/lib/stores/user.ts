@@ -1,12 +1,5 @@
+import type { User } from "$lib/services/user/get-user-profile";
 import { writable } from "svelte/store";
 
-type User = {
-  id: string;
-  emailConfirmed: boolean;
-  email: string;
-  skills: string[];
-  memberProfiles: string[];
-};
-
-let user = writable<User | null>();
+let user = writable<User>();
 export default user;

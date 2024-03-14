@@ -6,7 +6,12 @@
 
   export let changePage: (page: keyof typeof pages) => void;
 
-  const options = [
+  const options: {
+    name: keyof typeof pages;
+    title: string;
+    subTitle: string;
+    icon: any;
+  }[] = [
     {
       title: "AI-Assisted",
       subTitle: "Describe your goal and let AI do the heavy lifting for you.",
@@ -28,7 +33,7 @@
   ];
 </script>
 
-<div class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-6">
+<div class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-3">
   {#each options as o}
     <Button
       variant="outline"
@@ -50,3 +55,63 @@
     </Button>
   {/each}
 </div>
+
+<style lang="postcss">
+  :global(.fancy-border) {
+    /* --angle: 0deg;
+    border: 2px solid;
+    border-image: conic-gradient(
+        from var(--angle),
+        red,
+        yellow,
+        lime,
+        aqua,
+        blue,
+        magenta,
+        red
+      )
+      1;
+
+    animation: 10s rotate linear infinite; */
+    position: relative;
+  }
+  :global(.fancy-border)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    @apply rounded-md;
+    padding: 2.5px;
+    background: conic-gradient(
+      from var(--angle),
+      theme("accentColor.red.600"),
+      theme("accentColor.red.600"),
+      theme("accentColor.yellow.400"),
+      theme("accentColor.lime.400"),
+      theme("accentColor.sky.500"),
+      theme("accentColor.indigo.600"),
+      theme("accentColor.indigo.500"),
+      red
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @keyframes rotate-bg {
+    from {
+      background-: 100%;
+    }
+    to {
+      background-size: 1000%;
+    }
+  }
+
+  @property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+</style>

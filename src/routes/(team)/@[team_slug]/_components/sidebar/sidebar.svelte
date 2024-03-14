@@ -31,12 +31,11 @@
       avatarUrl: "string",
     },
   ];
-  let selectedTeam: Team = teams[0];
 </script>
 
 <aside
   class={cn(
-    "flex flex-col h-full border-r",
+    "flex bg-background flex-col h-full border-r",
     $dashboardState.isSidebarCollapsed ? "w-[52px]" : "w-64 min-w-64"
   )}
 >
@@ -46,11 +45,7 @@
       $dashboardState.isSidebarCollapsed ? "h-[52px]" : "px-2"
     )}
   >
-    <TeamSwitcher
-      bind:selectedTeam
-      isCollapsed={$dashboardState.isSidebarCollapsed}
-      {teams}
-    />
+    <TeamSwitcher isCollapsed={$dashboardState.isSidebarCollapsed} />
   </div>
   <Separator />
   <div
@@ -77,7 +72,7 @@
         title: "Overview",
         icon: LayoutDashboard,
         active: page === "overview",
-        href: `/@${selectedTeam.slug}/overview`,
+        href: `/@${$pageStore.params.team_slug}/overview`,
       },
     ]}
   />
@@ -91,7 +86,7 @@
         label: "2",
         icon: FolderKanban,
         active: page === "projects",
-        href: `/@${selectedTeam.slug}/projects`,
+        href: `/@${$pageStore.params.team_slug}/projects`,
       },
 
       {
@@ -99,7 +94,7 @@
         label: "4",
         icon: Users2,
         active: page === "member",
-        href: `/@${selectedTeam.slug}/member/all`,
+        href: `/@${$pageStore.params.team_slug}/member/all`,
       },
     ]}
   />
@@ -139,7 +134,7 @@
     ]}
   />
   <Button
-    class="rounded-none border-x-0"
+    class="rounded-none justify-start border-x-0"
     on:click={() =>
       ($dashboardState.isSidebarCollapsed =
         !$dashboardState.isSidebarCollapsed)}
@@ -148,7 +143,8 @@
     {#if $dashboardState.isSidebarCollapsed}
       <SidebarOpen class="h-4 w-4" />
     {:else}
-      <SidebarClose class="h-4 w-4" />
+      <SidebarClose class="h-4 w-4 mr-2" />
+      Collapse sidebar
     {/if}
   </Button>
 </aside>

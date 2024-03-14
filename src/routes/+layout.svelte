@@ -15,7 +15,7 @@
 
   export let data;
 
-  $user = data.userProfile;
+  if (data.userProfile) $user = data.userProfile;
 </script>
 
 <slot />

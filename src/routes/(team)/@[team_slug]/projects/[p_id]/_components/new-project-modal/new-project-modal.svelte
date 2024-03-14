@@ -3,6 +3,7 @@
   import dashboardState from "$lib/stores/dashboard-state";
   import { pages } from ".";
   import Initial from "./page/initial.svelte";
+  import Ai from "./page/ai.svelte";
 
   let loading: boolean = false;
 
@@ -28,5 +29,7 @@
 
   {#if page == "initial"}
     <Initial {changePage} />
+  {:else if page == "ai"}
+    <Ai {changePage} />
   {/if}
 </Modal>

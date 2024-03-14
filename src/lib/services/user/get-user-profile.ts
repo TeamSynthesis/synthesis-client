@@ -4,7 +4,7 @@ import type { RequestEvent } from "@sveltejs/kit";
 
 const { Ok, Err } = tsr;
 
-const getUserProfile = async (e: RequestEvent<any>): Promise<Result<User, string>> => {
+const getUserProfile = async (e: RequestEvent): Promise<Result<User, string>> => {
   try {
     const userId = e.cookies.get("u_id");
     const token = e.cookies.get("auth_token");
@@ -22,7 +22,8 @@ const getUserProfile = async (e: RequestEvent<any>): Promise<Result<User, string
     if (!body.isSuccess) return Err(body.errors[0]);
 
     return Ok(body.data);
-  } catch {
+  } catch (e) {
+    console.log(e)
     return Err("internal_error");
   }
 };
@@ -33,7 +34,16 @@ type User = {
   email: string;
   skills: string[];
   onBoarding: "CreateAccount" | "Details" | "Skills";
-  memberProfiles: string[];
+  memberProfiles: {
+    "id": string;
+    "team": {
+      "id": string;
+      "slug": string;
+      "name": string;
+      "avatarUrl": string;
+    },
+    "roles": string[];
+  }[];
 };
 
 export {
