@@ -4,6 +4,7 @@
   import { superForm } from "sveltekit-superforms/client";
   import Basic from "./_components/pages/basic.svelte";
   import Skills from "./_components/pages/skills.svelte";
+  import Team from "./_components/pages/team.svelte";
 
   export let data: PageData;
 
@@ -17,4 +18,6 @@
   <Basic {superformConfig} />
 {:else if $page.params.details_page === "skills"}
   <Skills />
+{:else if $page.params.details_page === "team"}
+  <Team />
 {/if}

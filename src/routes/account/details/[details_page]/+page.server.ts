@@ -22,16 +22,15 @@ const accountBasicDetailsSchema = z.object({
     .max(64, { message: "Profession must be less than 64 characters long" }),
 });
 
-
 export const load: PageServerLoad = async (e) => {
-  if (!["basic", "skills", "finalize"].includes(e.params.details_page))
+  if (!["basic", "skills", "team"].includes(e.params.details_page))
     redirect(302, "/account/details/basic");
 
-
-
   const form = await superValidate(e, accountBasicDetailsSchema);
-  const userProfile = (await e.parent()).userProfile
-  if (!userProfile) throw redirect(302, "/account/sign-in")
+  const userProfile = (await e.parent()).userProfile;
+  if (!userProfile) throw redirect(302, "/account/sign-in");
+  //@ts-ignore
+  form.data.avatarUrl = userProfile?.avatarUrl;
 
   // form.data.avatarUrl = userProfile.
 
@@ -50,7 +49,6 @@ export const load: PageServerLoad = async (e) => {
 
 export const actions = {
   default: async (e: RequestEvent) => {
-
     switch (e.params.details_page) {
       case "basic":
         const form = await superValidate(e, accountBasicDetailsSchema);
@@ -61,30 +59,34 @@ export const actions = {
             form,
           });
         }
-        const response = await setUserBasicDetails(e.cookies.get("u_id") ?? "", e.cookies.get("auth_token") ?? "", {
-          FullName: form.data.fullname,
-          Profession: form.data.profession,
-          UserName: form.data.username
-        })
+        const response = await setUserBasicDetails(
+          e.cookies.get("u_id") ?? "",
+          e.cookies.get("auth_token") ?? "",
+          {
+            FullName: form.data.fullname,
+            Profession: form.data.profession,
+            UserName: form.data.username,
+          }
+        );
 
-        if (response.ok) throw redirect(302, "/account/details/skills")
+        if (response.ok) throw redirect(302, "/account/details/skills");
         else {
-
           form.errors._errors = [response.val];
           return fail(400, {
             form,
           });
         }
       case "skills":
-        const r = await setUserSkills(e.cookies.get("u_id") ?? "", e.cookies.get("auth_token") ?? "", (await e.request.formData()).get("skills")?.toString() ?? "")
+        const r = await setUserSkills(
+          e.cookies.get("u_id") ?? "",
+          e.cookies.get("auth_token") ?? "",
+          (await e.request.formData()).get("skills")?.toString() ?? ""
+        );
 
-        if (r.ok === true) throw redirect(302, "/account/details/finalize")
+        if (r.ok) {
+          console.log("redirecting to team");
+          throw redirect(302, "/account/details/team");
+        }
     }
-
-    await new Promise((resolve, _) => {
-      setTimeout(resolve, 1000);
-    });
-
-    redirect(302, "/account/details/skills");
   },
 };

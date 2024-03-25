@@ -40,7 +40,7 @@
   <Select.Content>
     <Select.Label>Select team</Select.Label>
     <Select.Separator />
-    {#each $user.memberProfiles as mp (mp.team.slug)}
+    {#each $user.memberProfiles as mp (mp.team.id)}
       <Select.Item
         on:click={() => goto(`/@${mp.team.slug}`)}
         value={mp.team.slug}

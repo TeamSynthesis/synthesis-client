@@ -6,7 +6,7 @@
   import { twMerge } from "tailwind-merge";
 
   $: pageIndex =
-    ["basic", "skills", "finalize"].indexOf($page.params.details_page) + 1;
+    ["basic", "skills", "team"].indexOf($page.params.details_page) + 1;
 </script>
 
 <div
