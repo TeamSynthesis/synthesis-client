@@ -7,14 +7,11 @@
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "@sveltejs/kit";
   import { goto } from "$app/navigation";
-  import type { SubmitFunction } from "@sveltejs/kit";
-  import { goto } from "$app/navigation";
 
   let loading: boolean = false;
 
   $: selected = [] as string[];
 
-  const onSubmit: SubmitFunction = () => {
   const onSubmit: SubmitFunction = () => {
     loading = true;
     return ({ result }) => {
