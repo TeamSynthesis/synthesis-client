@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { Modal } from "$lib/ui/modal";
+  import { Input } from "$lib/ui/input";
+  import { Label } from "$lib/ui/label";
+  import { Button } from "$lib/ui/button";
+  import slugify from "$lib/helpers/slugify";
+  import type { SubmitFunction } from "@sveltejs/kit";
+  import { enhance } from "$app/forms";
+  import { Loader2 } from "lucide-svelte";
   import dashboardState from "$lib/stores/dashboard-state";
   import Label from "$lib/ui/label/label.svelte";
   import Input from "$lib/ui/input/input.svelte";

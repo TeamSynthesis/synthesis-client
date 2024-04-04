@@ -16,6 +16,7 @@
   export let data;
 
   if (data.userProfile) $user = data.userProfile;
+  $: console.log("user", $user);
 </script>
 
 <slot />
