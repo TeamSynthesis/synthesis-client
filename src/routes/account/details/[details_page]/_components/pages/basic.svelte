@@ -2,12 +2,14 @@
   import { Button } from "$lib/ui/button";
   import { Input } from "$lib/ui/input";
   import { Label } from "$lib/ui/label";
-  import { Loader2 } from "lucide-svelte";
+  import { Loader2, User } from "lucide-svelte";
   import * as Avatar from "$lib/ui/avatar";
 
   export let superformConfig: any;
   let file: HTMLInputElement;
   let fileUploadStatus: "loading" | "success" | "error";
+
+  $: pp = "";
 
   const {
     form: superFormStore,
@@ -48,7 +50,7 @@
             ])
         );
 
-      if (result.isSuccess) {
+      if (result.data) {
         fileUploadStatus = "success";
         $superFormStore.avatarUrl = result.data.url;
       } else {
@@ -80,19 +82,21 @@
     <input-group class="flex flex-col text-left space-y-3">
       <div class="flex-center flex-col mb-4">
         <Avatar.Root id="avatar" class="h-20  w-20">
-          <Avatar.Image
-            src={$superFormStore.avatarUrl}
-            alt="@user:{$superFormStore.username}"
-          />
-          <Avatar.Fallback>
-            {#if fileUploadStatus === "loading"}
+          {#if fileUploadStatus === "loading"}
+            <div class="flex items-center w-full h-full justify-center">
               <Loader2 class="h-4 w-4 animate-spin duration-150 text-primary" />
-            {:else}
-              CN
-            {/if}
-          </Avatar.Fallback>
+            </div>
+          {:else}
+            <Avatar.Image
+              class="object-cover"
+              src={$superFormStore.avatarUrl}
+              alt="@user:{$superFormStore.username}"
+            />
+            <Avatar.Fallback>
+              <User />
+            </Avatar.Fallback>
+          {/if}
         </Avatar.Root>
-
         <Button variant="ghost" on:click={() => file.click()} size="sm"
           >Change avatar</Button
         >
@@ -159,6 +163,6 @@
     </Button>
   </div>
 </form>
-<p class="text-sm h-5 text-left text-destructive">
+<p class="text-sm h-5 text-left w-full text-destructive">
   {$errors._errors?.at(0) ?? ""}
 </p>

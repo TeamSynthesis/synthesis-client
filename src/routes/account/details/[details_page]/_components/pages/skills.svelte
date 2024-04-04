@@ -5,14 +5,18 @@
   import { TECH_CATEGORIES, TECHNOLOGIES } from "$lib/consts/technologies";
   import { twMerge } from "tailwind-merge";
   import { enhance } from "$app/forms";
+  import type { SubmitFunction } from "@sveltejs/kit";
+  import { goto } from "$app/navigation";
 
   let loading: boolean = false;
 
   $: selected = [] as string[];
 
-  const onSubmit = () => {
+  const onSubmit: SubmitFunction = () => {
     loading = true;
-    return () => {
+    return ({ result }) => {
+      //@ts-ignore
+      if (result?.location) goto(result.location);
       loading = false;
     };
   };
