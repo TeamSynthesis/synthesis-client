@@ -31,6 +31,8 @@ const getUserProfile = async (e: RequestEvent): Promise<Result<User, string>> =>
 type User = {
   id: string;
   emailConfirmed: boolean;
+  userName?:string;
+  avatarUrl?:string;
   email: string;
   skills: string[];
   onBoarding: "CreateAccount" | "Details" | "Skills";

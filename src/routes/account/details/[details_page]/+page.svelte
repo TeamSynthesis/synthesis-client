@@ -18,6 +18,6 @@
   <Basic {superformConfig} />
 {:else if $page.params.details_page === "skills"}
   <Skills />
-{:else if $page.params.details_page === "finalize"}
+{:else if $page.params.details_page === "team"}
   <Finalize />
 {/if}

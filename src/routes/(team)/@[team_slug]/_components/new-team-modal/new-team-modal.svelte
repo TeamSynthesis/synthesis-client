@@ -1,19 +1,14 @@
 <script lang="ts">
-  import { Input } from "$lib/ui/input";
   import { Label } from "$lib/ui/label";
   import { Button } from "$lib/ui/button";
   import slugify from "$lib/helpers/slugify";
-  import type { SubmitFunction } from "@sveltejs/kit";
-  import { enhance } from "$app/forms";
-  import { Loader2 } from "lucide-svelte";
   import dashboardState from "$lib/stores/dashboard-state";
-  import Label from "$lib/ui/label/label.svelte";
   import Input from "$lib/ui/input/input.svelte";
-  import Button from "$lib/ui/button/button.svelte";
   import { Loader2 } from "lucide-svelte";
   import Textarea from "$lib/ui/textarea/textarea.svelte";
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "@sveltejs/kit";
+    import { Modal } from "$lib/ui/modal";
 
   let loading: boolean;
   let error: string = "";

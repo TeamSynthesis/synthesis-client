@@ -1,14 +1,15 @@
 <script>
-  import { Input } from "$lib/ui/input";
+import userStore from "$lib/stores/user";
   import * as Avatar from "$lib/ui/avatar";
   import { Button } from "$lib/ui/button";
   import { page } from "$app/stores";
   import { Bell, Calendar, KanbanIcon, ListTodo, Search } from "lucide-svelte";
+    import { Logo } from "$lib/ui/logo";
 </script>
 
 <header class="border-b w-full h-[52px] flex justify-between p-2">
   <span class="flex gap-2 justify-start items-center flex-1">
-    <div class="h-9 w-9 bg-primary rounded-sm text-white p-0.5">_sy</div>
+    <Logo class="h-12 w-12 mb-1" />
     <span class="font-medium text-secondary-foreground hidden sm:flex"
       >Synthesis</span
     >
@@ -39,8 +40,9 @@
     </div>
 
     <Avatar.Root class="flex-shrink-0 h-9 w-9">
-      <Avatar.Image />
-      <Avatar.Fallback>De</Avatar.Fallback>
+      <Avatar.Image src={$userStore.avatarUrl}/>
+      <Avatar.Fallback>{$userStore?.userName?.slice(0, 2)}
+      </Avatar.Fallback>
     </Avatar.Root>
   </span>
 </header>

@@ -1,16 +1,17 @@
-import type { PageServerLoad } from "./$types";
+import { fail, redirect } from "@sveltejs/kit";
+import type { PageServerLoad, RequestEvent } from "./$types";
 import { z } from "zod";
+import createAiProject from "$lib/services/project/create-ai-project";
 
-const newProjectFromAISchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Project name must be at least 2 characters long" })
-    .max(64, { message: "Project name must be less than 64 characters long" }),
 
-  description: z
-    .string()
-    .min(32, { message: "Project name must be at least 2 characters long" })
-    .max(2056, {
-      message: "Project name must be less than 64 characters long",
-    }),
-});
+export const actions = {
+  default: async (e: RequestEvent) => {
+
+    const formData = await e.request.formData();
+    const prompt = formData.get("prompt")?.toString() ?? "";
+    const resp = await createAiProject({ prompt}, e);
+    console.log(`/@${e.params.team_slug}/preplans/${resp.val}`)
+    if (resp.ok) throw redirect(302, `/@${e.params.team_slug}/preplans/${resp.val}`)
+
+    return fail(400,{message:resp.val})
+  }}

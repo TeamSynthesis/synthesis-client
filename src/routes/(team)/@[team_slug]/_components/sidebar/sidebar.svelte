@@ -11,6 +11,7 @@
     LayoutDashboard,
     SidebarClose,
     SidebarOpen,
+    Workflow,
   } from "lucide-svelte";
   import TeamSwitcher from "./team-switcher.svelte";
   import Nav from "./nav.svelte";
@@ -20,6 +21,7 @@
   import { Button } from "$lib/ui/button/";
   import { page as pageStore } from "$app/stores";
   import dashboardState from "$lib/stores/dashboard-state";
+  import teamStore from "$lib/stores/team";
 
   $: page = $pageStore.url.pathname.split("/")[2] ?? "";
 
@@ -83,15 +85,15 @@
     links={[
       {
         title: "Projects",
-        label: "2",
-        icon: FolderKanban,
+        label: `${$teamStore?.projects?.length || 0}`,
+        icon: Workflow,
         active: page === "projects",
         href: `/@${$pageStore.params.team_slug}/projects`,
       },
 
       {
         title: "Members",
-        label: "4",
+        label: `${$teamStore?.members?.length || 0}`,
         icon: Users2,
         active: page === "member",
         href: `/@${$pageStore.params.team_slug}/member/all`,

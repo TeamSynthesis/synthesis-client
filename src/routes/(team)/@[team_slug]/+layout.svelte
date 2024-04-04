@@ -32,8 +32,9 @@
       <Header />
       <main class="w-full bg-gray-50 flex h-full">
         <Sidebar />
-
-        <slot />
+        <div class="w-full h-full flex-center">
+          <slot />
+        </div>
       </main>
     </div>
   {/await}
