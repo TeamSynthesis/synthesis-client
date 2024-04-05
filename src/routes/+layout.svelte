@@ -19,7 +19,7 @@
   const getProfile = async ()=>{
     const _user = await data.props.userProfile;
     if(typeof _user === "string") throw new Error(_user);
-    $user = _user;
+    if(_user) $user = _user;
     console.log("user", _user)
   } 
 </script>

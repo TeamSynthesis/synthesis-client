@@ -7,6 +7,7 @@ export const load: LayoutServerLoad = async (e) => {
       userProfile: (async ()=>{
         const r = await getUserProfile(e);
         if(r.ok === true) return r.val
+        if(r.val === "user_not_logged_in") return null
         return r.val
       })()
     }
