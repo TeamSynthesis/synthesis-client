@@ -1,20 +1,19 @@
 <script lang="ts">
-  import { Loader2 } from "lucide-svelte";
+  import { AlertTriangle, Loader2 } from "lucide-svelte";
   import type { LayoutData } from "./$types";
   import { Header } from "./_components/header";
   import { Sidebar } from "./_components/sidebar";
   import team from "$lib/stores/team";
   import { NewProjectModal } from "./projects/[p_id]/_components/new-project-modal/";
-  import { error } from "@sveltejs/kit";
   import { navigating } from "$app/stores";
 
   export let data: LayoutData;
 
   const getTeam = async () => {
     const _team = await data.props.team;
-    if (!_team) throw error(404, "team_not_found");
+    if (typeof _team === "string") throw new Error(_team);
     $team = _team;
-    console.log(_team);
+    console.log("team", _team);
   };
 </script>
 
@@ -25,7 +24,12 @@
 {:else}
   {#await getTeam()}
     <div class="h-screen w-full flex-center">
-      <Loader2 class="text-primary h-5 w-5 animate-spin duration-150" />
+      <div class="relative flex-col flex-center">
+        <Loader2 class="text-primary h-5 w-5 animate-spin duration-150" />
+        <p class="text-sm text-secondary-foreground mb-4">
+          Loading team
+        </p>
+      </div>
     </div>
   {:then _}
     <div class="h-screen w-full flex flex-col">
@@ -37,6 +41,18 @@
         </div>
       </main>
     </div>
+    {:catch error}
+  <div class="flex flex-col items-center justify-center w-full h-screen gap-2 p-4">
+    <div class="relative inline-flex">
+        <AlertTriangle class="w-10 h-10 text-red-500" />
+    </div>
+    <div class="mt-4 text-center">
+        <h1 class="text-xl font-semibold">Failed to load team</h1>
+        <p class="text-sm text-secondary-foreground">
+            {error.message}
+        </p>
+    </div>
+  </div>  
   {/await}
 {/if}
 <NewProjectModal />

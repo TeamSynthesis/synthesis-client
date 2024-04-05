@@ -22,7 +22,7 @@ const getTeam = async (
       res.json()
     );
 
-    if (!result.isSuccess) return Err(result.errors[0]);
+    if (!result.isSuccess) return Err((result as any).errors[0]);
     return Ok(result.data);
 
   } catch (e) {

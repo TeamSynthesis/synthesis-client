@@ -3,18 +3,34 @@ import type { LayoutServerLoad } from "./$types";
 import getTeam from "$lib/services/team/get-team";
 
 const load: LayoutServerLoad = async (e) => {
-  const memberProfiles = (await e.parent()).userProfile?.memberProfiles
-  if (!memberProfiles) throw error(404, "team_not_found")
 
-  const mp = memberProfiles.find((mp) => mp.team.slug === e.params.team_slug)
+  const getTeamStream = async(team_slug:string)=>{
+    let error:string = ""
+    const userProfile = await (await e.parent()).props.userProfile
+    if (typeof userProfile === "string") {
+      return "could_not_load_profile"
+    }
+    const memberProfiles = userProfile.memberProfiles
+    if (!memberProfiles) {
+      return "user_not_a_member"
+    }
 
-  if (!mp) throw error(404, "team_not_found");
+    const mp = memberProfiles.find((mp) => mp.team.slug === team_slug)
+    if (!mp) {
+      return "user_not_a_member"
+    }
 
-  const team = (async () => (await getTeam({ teamId: mp.team.id }, e)).unwrapOr(null))()
+
+    const team = (await getTeam({ teamId: mp.team.id }, e)).mapErr(e=>error=e).unwrapOr(null)
+    return team ?? error
+  }
+
+
+
 
   return {
     props: {
-      team
+      team:getTeamStream(e.params.team_slug)
     }
   }
 }
