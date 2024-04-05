@@ -1,15 +1,48 @@
 <script lang="ts">
     import preplan from "$lib/stores/preplan"
     import { onMount } from "svelte";
+    import { Button } from "$lib/ui/button";
+    import { Target, Palette, BarChart4, AlertTriangle } from "lucide-svelte";
+    import Overview from "./sections/overview.svelte";
+    import Design from "./sections/design.svelte";
+    import CompetitiveAnalysis from "./sections/competitive-analysis.svelte";
+
+    const navigation = [
+    {
+      title: "YOUR PLAN",
+      links: [
+        {
+          title: "Overview",
+          icon: Target,
+          slug: "overview",
+        },
+        {
+          title: "Competitive analysis",
+          icon: BarChart4,
+          slug: "competitive-analysis",
+        },
+        {
+          title: "Design",
+          icon: Palette,
+          slug: "design",
+        },
+      ],
+    },
+  ];
 
     let preplanStatus: "pending" | "success" | "error" = "pending";
     
+    let error:string = ""
+
     const pollPreplanFetchUntilDone=async ()=> {
         while (true) {
             try {
-                const response = await fetch("")
+                const response = await fetch("",{
+                  method:"POST"
+                })
                 if(response.status===200){
                     const data = await response.json()
+                    console.log(data)
                     if (data.message === "pending") {
                         console.log("pending");
                     }
@@ -19,13 +52,22 @@
                         break;
                     }
                 }
-            await new Promise(resolve => setTimeout(resolve, 10_000));
+                else{
+                  const data = await response.json()
+                  error = response.status + ": " + data.errors[0]
+                  preplanStatus = "error"
+                  break;
+
+                }
+            await new Promise(resolve => setTimeout(resolve, 5_000));
             } catch (error) {
             console.error("Error during polling:", error);
             // You can handle retries or other error handling logic here
             }
         }
     }
+    let section: string = "design";
+
 
     onMount(async () => {
         await pollPreplanFetchUntilDone();
@@ -43,14 +85,67 @@
     <div class="mt-4 text-center">
         <h1 class="text-xl font-semibold">Loading your preplan</h1>
         <p class="text-sm text-secondary-foreground">
-            Please wait while we generate your preplan.
+            Please wait while we load your preplan.
         </p>
     </div>
 </div>
+{:else if (preplanStatus == "error")}
+<div class="flex flex-col items-center justify-center w-full min-h-[50vh] gap-2 p-4">
+    <div class="relative inline-flex">
+        <AlertTriangle class="w-10 h-10 text-red-500" />
+    </div>
+    <div class="mt-4 text-center">
+        <h1 class="text-xl font-semibold">Failed to load your preplan</h1>
+        <p class="text-sm text-secondary-foreground">
+            {error}
+        </p>
+    </div>
+</div>
+{:else if (preplanStatus == "success" && $preplan!==null)}
+<div class="w-full h-full flex">
+    <aside class="h-full border-r bg-background w-64 min-w-64 px-3">
+      <div class="mt-4">
+        {#each navigation as n}
+          <span class="font-semibold text-sm">{n.title}</span>
+          <div class="flex flex-col">
+            {#each n.links as l}
+              <Button
+                on:click={() => (section = l.slug)}
+                variant="ghost"
+                class="justify-start items-center p-1 rounded-none"
+              >
+                <svelte:component this={l.icon} class="h-4 w-4 mr-2" />
 
-
-{:else if preplanStatus == "success"}
-
-<pre>{JSON.stringify($preplan ?? {}, null, 2)}</pre>
-
+                {l.title}</Button
+              >
+            {/each}
+          </div>
+        {/each}
+      </div>
+      <div class="flex flex-col"></div>
+    </aside>
+    
+    <div class="w-full flex h-full overflow-y-scroll">
+      {#if section === "overview"}
+        <Overview
+          description={$preplan.overview.description}
+          suggestedNames={$preplan.overview.suggestedDomains.map((x,i) => ({
+            name: $preplan?.overview.suggestedNames[i].name ?? "",
+            reason: x.reason,
+            domainName:  x.name,
+          }))}
+        />
+        
+      <!-- {:else if section === "design"}
+        <Design
+          colorPalette={$preplan.design.colorPalette}
+          icons={$preplan.design.icons}
+          mockups={$preplan.design.mockups}
+        />
+      {:else if section === "competitive-analysis"}
+        <CompetitiveAnalysis swot={$preplan.competitiveAnalysis.swot} />
+      {/if} -->
+      {/if}
+    </div>
+</div>
 {/if}

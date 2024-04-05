@@ -19,7 +19,6 @@
     loading = true;
     return (p) => {
       
-      console.log(p.result)
       //@ts-ignore
       if(p.result?.location){
 

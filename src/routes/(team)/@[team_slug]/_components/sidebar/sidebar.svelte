@@ -10,6 +10,7 @@
     Megaphone,
     LayoutDashboard,
     SidebarClose,
+    Puzzle,
     SidebarOpen,
     Workflow,
   } from "lucide-svelte";
@@ -90,13 +91,19 @@
         active: page === "projects",
         href: `/@${$pageStore.params.team_slug}/projects`,
       },
-
+      {
+        title: "Preplans",
+        label: `${$teamStore?.projects?.length || 0}`,
+        icon: Puzzle,
+        active: page === "preplans",
+        href: `/@${$pageStore.params.team_slug}/preplans`,
+      },
       {
         title: "Members",
         label: `${$teamStore?.members?.length || 0}`,
         icon: Users2,
-        active: page === "member",
-        href: `/@${$pageStore.params.team_slug}/member/all`,
+        active: page === "members",
+        href: `/@${$pageStore.params.team_slug}/members`,
       },
     ]}
   />

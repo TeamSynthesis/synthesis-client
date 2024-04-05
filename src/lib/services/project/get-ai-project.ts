@@ -18,7 +18,6 @@ const getAiProject = async (args: { processId: string; }, e: RequestEvent): Prom
         return res.json()
       });
       
-      console.log(result)
     if (result.errors) return Err(result.errors[0]);
     return Ok(result as any);
 
