@@ -27,8 +27,9 @@ export const load: PageServerLoad = async (e) => {
     redirect(302, "/account/details/basic");
 
   const form = await superValidate(e, accountBasicDetailsSchema);
-  const userProfile = (await e.parent()).userProfile;
-  if (!userProfile) throw redirect(302, "/account/sign-in");
+  const userProfile = await (await e.parent()).props.userProfile;
+
+  if (!userProfile || typeof userProfile === "string") throw redirect(302, "/account/sign-in");
   //@ts-ignore
   form.data.avatarUrl = userProfile?.avatarUrl;
 

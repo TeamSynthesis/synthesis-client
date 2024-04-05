@@ -7,7 +7,7 @@ const load: LayoutServerLoad = async (e) => {
   const getTeamStream = async(team_slug:string)=>{
     let error:string = ""
     const userProfile = await (await e.parent()).props.userProfile
-    if (typeof userProfile === "string") {
+    if (typeof userProfile === "string" || !userProfile) {
       return "could_not_load_profile"
     }
     const memberProfiles = userProfile.memberProfiles
