@@ -28,9 +28,6 @@
   <div class="flex flex-col items-center justify-center w-full h-screen gap-2 p-4">
     <div class="relative flex-col flex-center">
       <Loader2 class="text-primary h-5 w-5 animate-spin duration-150" />
-      <p class="text-sm text-secondary-foreground mb-4">
-        Loading user profile
-      </p>
     </div>
   </div>
 {:then _} 

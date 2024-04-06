@@ -26,9 +26,6 @@
     <div class="h-screen w-full flex-center">
       <div class="relative flex-col flex-center">
         <Loader2 class="text-primary h-5 w-5 animate-spin duration-150" />
-        <p class="text-sm text-secondary-foreground mb-4">
-          Loading team
-        </p>
       </div>
     </div>
   {:then _}
