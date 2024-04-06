@@ -21,7 +21,7 @@ export type Preplan = {
             "pricingModel": string,
             "url": string,
             "description": string,
-            "logoUrl": String
+            "logoUrl": string
           }[],
         "swot": {
           "strengths": string[],

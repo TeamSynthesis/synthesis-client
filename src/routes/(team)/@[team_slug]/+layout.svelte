@@ -36,7 +36,7 @@
       <Header />
       <main class="w-full bg-gray-50 flex h-[calc(100%-52px)]">
         <Sidebar />
-        <div class="w-full h-[calc(100%-52px)] flex-center">
+        <div class="w-full h-full flex-center">
           <slot />
         </div>
       </main>

@@ -2,10 +2,12 @@
     import preplan from "$lib/stores/preplan"
     import { onMount } from "svelte";
     import { Button } from "$lib/ui/button";
-    import { Target, Palette, BarChart4, AlertTriangle } from "lucide-svelte";
+    import { Target, Palette, BarChart4, AlertTriangle,Lightbulb, Plus } from "lucide-svelte";
     import Overview from "./sections/overview.svelte";
     import Design from "./sections/design.svelte";
     import CompetitiveAnalysis from "./sections/competitive-analysis.svelte";
+    import { twMerge } from "tailwind-merge";
+    import Features from "./sections/features.svelte";
 
     const navigation = [
     {
@@ -22,10 +24,15 @@
           slug: "competitive-analysis",
         },
         {
-          title: "Design",
+          title: "Branding",
           icon: Palette,
           slug: "design",
         },
+        {
+          title:"Features",
+          icon:Lightbulb,
+          slug:"features"
+        }
       ],
     },
   ];
@@ -112,7 +119,7 @@
               <Button
                 on:click={() => (section = l.slug)}
                 variant="ghost"
-                class="justify-start items-center p-1 rounded-none"
+                class={twMerge("justify-start items-center p-1 rounded-none", section === l.slug && "bg-secondary text-primary")}
               >
                 <svelte:component this={l.icon} class="h-4 w-4 mr-2" />
 
@@ -135,17 +142,28 @@
             domainName:  x.name,
           }))}
         />
-        
-      <!-- {:else if section === "design"}
+        {:else if section === "design"}
         <Design
-          colorPalette={$preplan.design.colorPalette}
-          icons={$preplan.design.icons}
-          mockups={$preplan.design.mockups}
-        />
+        colorPalette={$preplan.branding.palette}
+        icon={$preplan.branding.icon}
+        wireframe={$preplan.branding.wireframe}
+        moodBoard={$preplan.branding.moodBoard}
+      />
+      
       {:else if section === "competitive-analysis"}
-        <CompetitiveAnalysis swot={$preplan.competitiveAnalysis.swot} />
-      {/if} -->
+        <CompetitiveAnalysis 
+        competitors={$preplan.competitiveAnalysis.competitors}
+        swot={$preplan.competitiveAnalysis.swot} 
+        targetAudience={$preplan.competitiveAnalysis.targetAudience}
+        />
+      {:else if section === "features"}
+      <Features
+          features={$preplan.features}
+        />
       {/if}
     </div>
+    <Button class="bottom-10 right-10 absolute">
+      <Plus class="h-4 w-4 mr-2" />
+      Accept & create project</Button>
 </div>
 {/if}
