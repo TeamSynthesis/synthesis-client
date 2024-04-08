@@ -1,16 +1,20 @@
 import { BASE_API_URL } from "$env/static/private";
 import type { RequestEvent } from "@sveltejs/kit";
+import type {Preplan} from "$lib/stores/preplan";
 
 import tsr, { type Result } from "ts-results";
 const { Ok, Err } = tsr;
 
-const createAiProject = async (args: { prompt: string; }, e: RequestEvent): Promise<Result<string, string>> => {
+const createProject = async (args: { name: string;description:string;features:Preplan["features"], teamId:string}, e: RequestEvent): Promise<Result<string, string>> => {
 
+    
   const form = new FormData()
-  form.set("prompt", args.prompt)
+  form.set("Name", args.name)
+  form.set("Description", args.description)
+  form.set("Features", JSON.stringify(args.features))
   
   try {
-    const result: APIResponse = await fetch(BASE_API_URL + `/Projects/generate`, {
+    const result: APIResponse = await fetch(BASE_API_URL + `/Projects?teamId=${args.teamId}`, {
       method: "POST",
       body: form,
       headers: {
@@ -31,4 +35,4 @@ const createAiProject = async (args: { prompt: string; }, e: RequestEvent): Prom
   }
 }
 
-export default createAiProject
+export default createProject

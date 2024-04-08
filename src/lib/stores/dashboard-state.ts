@@ -5,6 +5,7 @@ let dashboardState = writable({
   isNewProjectModalOpen: false,
   isNewTeamModalOpen: false,
   isJoinTeamModalOpen: false,
+  createProjectFromPreplanModalOpen: false,
 });
 
 export default dashboardState;

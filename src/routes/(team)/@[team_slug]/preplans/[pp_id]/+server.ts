@@ -1,9 +1,9 @@
-import getAiProject from '$lib/services/project/get-ai-project';
+import getPreplan from '$lib/services/project/get-preplan';
 import type { RequestHandler } from './$types';
 import type {Preplan} from "$lib/stores/preplan";
 
 export const POST: RequestHandler = async (e) => {
-    const preplan = await getAiProject({processId: e.params.pp_id}, e);
+    const preplan = await getPreplan({processId: e.params.pp_id}, e);
     if(preplan.ok === true)
     return new Response(JSON.stringify(preplan.val), {
         status: 200,

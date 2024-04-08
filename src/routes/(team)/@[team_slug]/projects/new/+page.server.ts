@@ -1,7 +1,7 @@
 import { fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, RequestEvent } from "./$types";
 import { z } from "zod";
-import createAiProject from "$lib/services/project/create-ai-project";
+import createPreplan from "$lib/services/project/create-preplan";
 
 
 export const actions = {
@@ -9,7 +9,7 @@ export const actions = {
 
     const formData = await e.request.formData();
     const prompt = formData.get("prompt")?.toString() ?? "";
-    const resp = await createAiProject({ prompt}, e);
+    const resp = await createPreplan({ prompt}, e);
     console.log(`/@${e.params.team_slug}/preplans/${resp.val}`)
     if (resp.ok) throw redirect(302, `/@${e.params.team_slug}/preplans/${resp.val}`)
 

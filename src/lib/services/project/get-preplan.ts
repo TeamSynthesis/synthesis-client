@@ -5,7 +5,7 @@ import type { RequestEvent } from "@sveltejs/kit";
 import tsr, { type Result } from "ts-results";
 const { Ok, Err } = tsr;
 
-const getAiProject = async (args: { processId: string; }, e: RequestEvent): Promise<Result<{data?:Preplan,isSuccess:boolean, message:"pending"|"project generated successfully" }, string>> => {
+const getPreplan = async (args: { processId: string; }, e: RequestEvent): Promise<Result<{data?:Preplan,isSuccess:boolean, message:"pending"|"project generated successfully" }, string>> => {
 
   try {
     const result: APIResponse = await fetch(BASE_API_URL + `/Projects/generated-project?processId=${args.processId}`, {
@@ -27,4 +27,4 @@ const getAiProject = async (args: { processId: string; }, e: RequestEvent): Prom
   }
 }
 
-export default getAiProject
+export default getPreplan

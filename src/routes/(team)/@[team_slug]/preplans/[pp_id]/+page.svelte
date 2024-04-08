@@ -8,6 +8,8 @@
     import CompetitiveAnalysis from "./sections/competitive-analysis.svelte";
     import { twMerge } from "tailwind-merge";
     import Features from "./sections/features.svelte";
+    import CreateProjectFromPreplanModal from "../../projects/[p_id]/_components/create-project-from-preplan-modal/create-project-from-preplan-modal.svelte";
+    import dashboardState from "$lib/stores/dashboard-state";
 
     const navigation = [
     {
@@ -162,8 +164,12 @@
         />
       {/if}
     </div>
-    <Button class="bottom-10 right-10 absolute">
+    <Button
+      on:click={() => $dashboardState.createProjectFromPreplanModalOpen = true}
+    class="bottom-10 right-10 absolute">
       <Plus class="h-4 w-4 mr-2" />
       Accept & create project</Button>
 </div>
 {/if}
+
+<CreateProjectFromPreplanModal/>
