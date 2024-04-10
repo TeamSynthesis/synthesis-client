@@ -2,48 +2,52 @@
 
     import { Button } from "$lib/ui/button";
     import { Input } from "$lib/ui/input";
-    import { Send } from "lucide-svelte";
+    import { Loader2, Send } from "lucide-svelte";
     import * as Avatar from "$lib/ui/avatar";
+    import { page } from "$app/stores";
 
     import team from "$lib/stores/team";
     import userStore from "$lib/stores/user";
+    import { channel } from "$lib/stores/ably";
+    import getRandomString from "$lib/helpers/get-random-id";
+    import type { Message } from "$lib/stores/inbox";
+    import inboxStore from "$lib/stores/inbox";
 
-    type Message = {
-        id: string;
-        content: string;
-        sender: {
-            id: string;
-            name: string;
-            avatarUrl: string;
-        };
-        timestamp: string;
+    let sendingStatus:"idle" | "pending" | "success" | "error" = "idle";
+    $: draft = ""
+
+    const sendMessage = async ()=>{
+        sendingStatus = "pending";
+
+        const message:Message =  {
+            content: draft,
+            id: getRandomString(36),
+            sender:$userStore.id.toString(),
+            timestamp: new Date().toISOString()
+        }
+        await $channel.publish(`chat:${$page.params.u}`, message).catch((e)=>{
+            console.error(e);
+            sendingStatus = "error";
+        });
+        draft = ""
+        sendingStatus ="success"
+        sendingStatus ="idle"
+
     };
-
-    const messages:Message[] = [
-        {
-            id: "1",
-            content: "Team synth!",
-            sender: {
-                id: $userStore.id,
-                name: "Alice",
-                avatarUrl: $userStore.avatarUrl
-            },
-            timestamp: "2021-10-10T12:00:00Z"
-        },
-        {
-            id: "2",
-            content: "yesssh",
-            sender: {
-                id: $userStore.id,
-                name: "Alice",
-                avatarUrl: $userStore.avatarUrl ?? ""
-            },
-            timestamp: "2021-10-10T12:01:00Z"
-        },
-    ]
-
+  
+    $:messages = ($inboxStore.chats.find(c => c.chatId === $page.params.u)?.messages ?? []).map(m=>{
+        const sender = $team?.members.find(tm => tm.user.id === m.sender);
+        console.log(sender)
+        return {...m,
+        sender:{
+            id: m.sender,
+            name: sender?.user?.userName,
+            avatarUrl: sender?.user?.avatarUrl
+        }}
+    });
+   
 </script>
-<div class="flex-1 w-full h-full bg-secondary relative">
+<div class=" w-full  h-full bg-secondary relative">
     <header class="bg-white p-3 h-[53px] border-b gap-3 flex items-center text-gray-700">
         <Avatar.Root class="flex-shrink-0 h-9 w-9 rounded-sm">
             <Avatar.Image src={$team?.avatarUrl}/>
@@ -53,7 +57,7 @@
         <h1 class="text-sm font-semibold">Team uno</h1>
     </header>
 
-    <div class="h-full overflow-y-auto p-4 pb-36">
+    <div class="h-full overflow-y-scroll p-4 pb-36">
        {#each messages as m}
         {#if m.sender.id === $userStore.id}
         <div class="flex justify-end mb-4 cursor-pointer">
@@ -83,13 +87,21 @@
         <div class="flex items-center gap-3">
             <Input
                 placeholder="Type a message ..."
+                bind:value={draft}
                 class="w-full"
             />
 
             <Button
+                on:click={sendMessage}
+                disabled={sendingStatus === "pending" || draft.length <1}
                 size="icon"
+                
                 class="aspect-square">
-                <Send class="w-5 h-5"/>
+                {#if sendingStatus === "pending"}
+                    <Loader2 class="mr-2 animate-spin h-5 w-5" />
+                {:else}
+                    <Send class="w-5 h-5"/>
+                {/if}
             </Button>
         </div>
     </footer>

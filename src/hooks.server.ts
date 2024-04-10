@@ -2,6 +2,10 @@ import { auth } from "$lib/config/auth";
 import type { Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
+import { fetch, setGlobalDispatcher, Agent } from 'undici'
+
+setGlobalDispatcher(new Agent({ connect: { timeout: 60_000 } }) )
+
 const useAuth: Handle = async ({ event, resolve }) => {
   const sessionId = event.cookies.get(auth.sessionCookieName);
 

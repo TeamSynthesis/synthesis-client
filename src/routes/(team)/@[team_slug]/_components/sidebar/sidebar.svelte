@@ -91,7 +91,7 @@
         title: "Chat",
         icon: InboxIcon,
         active: page === "chat",
-        href: "chat",
+        href: `/@${$pageStore.params.team_slug}/chat`,
       },
     ]}
   />

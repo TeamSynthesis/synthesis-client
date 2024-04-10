@@ -13,18 +13,20 @@
   import Button from "$lib/ui/button/button.svelte";
 </script>
 
-<div class="flex items-center"></div>
-{#if false}
+<div class="h-full w-full bg-secondary">
+
+{#if $team?.projects.length}
+<ul
+  class={twMerge(
+
+    "p-2 gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 flex-wrap max-h-0",
+    $dashboardState.isSidebarCollapsed &&
+      "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+  )}
+>
   {#each Array(4) as project}
-    <li
-      class={twMerge(
-        "p-2 gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 flex-wrap max-h-0",
-        $dashboardState.isSidebarCollapsed &&
-          "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
-      )}
-    >
-      <ul
-        class="rounded-md flex flex-col border h-36 md:max-w-80 w-full hover:bg-secondary"
+      <li
+        class="rounded-md bg-background flex flex-col border h-36 md:max-w-80 w-full hover:bg-secondary"
       >
         <div class="p-2 flex-1">
           <div class="text-sm text-secondary-foreground font-medium">
@@ -44,9 +46,9 @@
           </Avatar.Root>
           <span class="text-xs text-muted-foreground">mike</span>
         </div>
-      </ul>
-    </li>
-  {/each}
+      </li>
+      {/each}
+    </ul>
 {:else}
   <div class="-mt-16 flex-center flex-col h-full w-full gap-2">
     <img
@@ -71,3 +73,4 @@
     </Button>
   </div>
 {/if}
+</div>

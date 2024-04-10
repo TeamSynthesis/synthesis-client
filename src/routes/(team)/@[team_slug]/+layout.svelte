@@ -6,13 +6,34 @@
   import team from "$lib/stores/team";
   import { NewProjectModal } from "./projects/[p_id]/_components/new-project-modal/";
   import { navigating } from "$app/stores";
+    import ably, { channel } from "$lib/stores/ably";
+    import Ably from "ably"
+    import { onMount } from "svelte";
+    import inbox from "$lib/stores/inbox";
 
   export let data: LayoutData;
 
   const getTeam = async () => {
     const _team = await data.props.team;
+   
     if (typeof _team === "string") throw new Error(_team);
     $team = _team;
+
+    const ably = new Ably.Realtime("XwZKVQ.0Uk0FQ:gxNCwcEIquC36wmkfuKzFy8pMj8P7QrwiFDKe4AeucU")
+    ably.connection.once("connected", () => {
+      console.log("Connected to Ably!")
+    })
+
+    $channel = ably.channels.get(_team.id)
+
+    $channel.subscribe(`chat:${_team.slug}`, (message) => {
+      inbox.addMessage(_team.slug, message.data)
+
+      console.log(message.data)
+    });
+    
+  
+
     console.log("team", _team);
   };
 </script>
@@ -33,7 +54,7 @@
       <Header />
       <main class="w-full bg-gray-50 flex h-[calc(100%-52px)]">
         <Sidebar />
-        <div class="w-full h-full flex-center">
+        <div class="w-full h-full overflow-hidden flex-center">
           <slot />
         </div>
       </main>

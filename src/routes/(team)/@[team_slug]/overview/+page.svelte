@@ -85,10 +85,10 @@
     class="mt-6 grid grid-cols-2 md:grid-cols-4 justify-center w-full items-center gap-4"
   >
     {#each quickInsights as i}
-      {@const color =
-        i.used / i.limit > 0.8
+      {@const color = !i.limit ?"bg-green-600 text-green-600" : 
+        i.used / i?.limit > 0.8
           ? "bg-red-600 text-red-600"
-          : i.used / i.limit > 0.5
+          : i.used / i?.limit > 0.5
             ? "bg-amber-600 text-amber-600"
             : "bg-green-600 text-green-600"}
       <a

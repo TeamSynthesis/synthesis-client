@@ -49,15 +49,16 @@
   <form
     use:enhance={submit}
     method="POST"
-    action={`/@${$page.params.team_slug}/projects/new`.toString()}
+    action={`/@${$page.params.team_slug}/projects/generate-from-preplan`.toString()}
     class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-6"
   >
       <div class="grid gap-1">
+        <input type="hidden" class="hidden" name="preplan_id" value={$page.params?.pp_id} />
         <Label for="description">Project name</Label>
         <Input
           id="prompt"
           name="prompt"
-          placeholder="A mobile messaging app that ..."
+          placeholder="Pied piper"
           minlength={2}
           maxlength={64}
           required
