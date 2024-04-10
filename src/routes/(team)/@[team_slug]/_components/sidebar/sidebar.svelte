@@ -13,6 +13,9 @@
     Puzzle,
     SidebarOpen,
     Workflow,
+    Inbox,
+    InboxIcon,
+    KanbanSquare,
   } from "lucide-svelte";
   import TeamSwitcher from "./team-switcher.svelte";
   import Nav from "./nav.svelte";
@@ -85,9 +88,22 @@
     isCollapsed={$dashboardState.isSidebarCollapsed}
     links={[
       {
+        title: "Chat",
+        icon: InboxIcon,
+        active: page === "chat",
+        href: "chat",
+      },
+    ]}
+  />
+  <Separator />
+  <Nav
+    class="place-self-end"
+    isCollapsed={$dashboardState.isSidebarCollapsed}
+    links={[
+      {
         title: "Projects",
         label: `${$teamStore?.projects?.length || 0}`,
-        icon: Workflow,
+        icon: KanbanSquare,
         active: page === "projects",
         href: `/@${$pageStore.params.team_slug}/projects`,
       },
