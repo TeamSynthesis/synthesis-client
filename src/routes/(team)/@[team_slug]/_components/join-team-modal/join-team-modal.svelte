@@ -46,7 +46,23 @@
     use:enhance={onSubmit}
     class="grid gap-2"
   >
-    
+  <div class="grid gap-1">
+    <Label class={"ml-2 text-xs text-secondary-foreground"} for="name"
+      >Slug</Label
+    >
+    <Input
+      id="slug"
+      name="slug"
+      minlength={2}
+      maxlength={64}
+      type="text"
+      placeholder="team-syth"
+      autocapitalize="none"
+      autocomplete="off"
+      autocorrect="off"
+      required
+    />
+  </div>
     <div class="grid gap-1">
       <Label class={"ml-2 text-xs text-secondary-foreground"} for="name"
         >Invite Code</Label

@@ -10,6 +10,7 @@
   import dashboardState from "$lib/stores/dashboard-state";
   import { twMerge } from "tailwind-merge";
   import team from "$lib/stores/team";
+  import { page } from "$app/stores";
   import Button from "$lib/ui/button/button.svelte";
 </script>
 
@@ -25,28 +26,51 @@
   )}
 >
   {#each $team.projects as p}
+    {@const creator = $team.members[0]}
+    <a href={`/@${$page.params.team_slug}/projects/${p.id}`}>
       <li
         class="rounded-md bg-background flex flex-col border h-36 md:max-w-80 w-full hover:bg-secondary"
       >
-        <div class="p-2 flex-1">
-          <div class="text-sm text-secondary-foreground font-medium">
-            Sideups
+        <div class="p-2 flex-1 flex gap-2 flex-col">
+          <div class="text-sm text-secondary-foreground flex gap-2 font-medium">
+            <Avatar.Root class="flex-shrink-0 rounded-sm h-10 w-10">
+              <Avatar.Image
+                src={p.prePlan.branding.icon.imgUrl} 
+              />
+              <Avatar.Fallback class="rounded-sm" />
+            </Avatar.Root>
+            <div class="flex flex-col">
+              <span>
+                {p.prePlan.overview.suggestedNames[0].name}
+              </span>
+              <span class="text-xs text-secondary-foreground">
+                {new Date(p.createdOn).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",  
+                })}
+              </span>
+
+            </div>
           </div>
-          <div class="text-xs text-muted-foreground flex items-center">
-            Side ups is a platform for startups to find their first customers.
+          <div class="text-xs text-muted-foreground line-clamp-3 items-center">
+            {p.description}
           </div>
         </div>
 
         <div class="border-t gap-2 flex-center h-8 px-2 justify-start">
           <Avatar.Root class="flex-shrink-0 h-5 w-5">
             <Avatar.Image
-              src="https://avatars.githubusercontent.com/u/4726921?v=4"
+              src={creator.user.avatarUrl} 
             />
             <Avatar.Fallback class="rounded-sm" />
           </Avatar.Root>
-          <span class="text-xs text-muted-foreground">mike</span>
+          <span class="text-xs text-muted-foreground">
+            {creator.user.userName}
+          </span>
         </div>
       </li>
+    </a>
       {/each}
     </ul>
 {:else}

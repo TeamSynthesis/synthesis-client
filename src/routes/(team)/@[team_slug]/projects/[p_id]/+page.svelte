@@ -12,49 +12,16 @@
   } from "lucide-svelte";
   import { Kanban } from "./_components/kanban";
   import { PreplanDialog } from "./_components/preplan-dialog";
+  import team from "$lib/stores/team";
+    import { page } from "$app/stores";
+
+  let project = $team?.projects.find((p) => p.id === $page.params.p_id)!;
 
   let columnItems = [
     {
       id: 1,
       name: "TODO",
-      items: [
-        {
-          id: 41,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-        {
-          id: 4,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-        {
-          id: 1,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-        {
-          id: 141,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-        {
-          id: 421,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-        {
-          id: 416,
-          title: "Create Kanbana board",
-          description:
-            "Create a fully interactive kanban board that'll allow team members to add tasks.",
-        },
-      ],
+      items: project.features
     },
     {
       id: 2,
