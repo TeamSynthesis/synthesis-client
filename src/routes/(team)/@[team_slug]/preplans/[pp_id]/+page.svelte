@@ -2,7 +2,7 @@
     import preplan from "$lib/stores/preplan"
     import { onMount } from "svelte";
     import { Button } from "$lib/ui/button";
-    import { Target, Palette, BarChart4, AlertTriangle,Lightbulb, Plus } from "lucide-svelte";
+    import { Target, Palette, BarChart4, AlertTriangle,Lightbulb, Plus, Settings } from "lucide-svelte";
     import Overview from "./sections/overview.svelte";
     import Design from "./sections/design.svelte";
     import CompetitiveAnalysis from "./sections/competitive-analysis.svelte";
@@ -10,6 +10,7 @@
     import Features from "./sections/features.svelte";
     import CreateProjectFromPreplanModal from "../../projects/[p_id]/_components/create-project-from-preplan-modal/create-project-from-preplan-modal.svelte";
     import dashboardState from "$lib/stores/dashboard-state";
+    import Technologies from "./sections/technologies.svelte";
 
     const navigation = [
     {
@@ -34,6 +35,11 @@
           title:"Features",
           icon:Lightbulb,
           slug:"features"
+        },
+        {
+          title:"Technologies",
+          slug:"technologies",
+          icon:Settings
         }
       ],
     },
@@ -55,9 +61,9 @@
                     if (data.message === "pending") {
                         console.log("pending");
                     }
-                    if (data.message === "project generated successfully") {
+                    if (data.message === "get preplan success") {
                         preplanStatus = "success"
-                        $preplan = data.data;
+                        $preplan = data.data.plan;
                         break;
                     }
                 }
@@ -75,7 +81,7 @@
             }
         }
     }
-    let section: string = "design";
+    let section: string = "overview";
 
 
     onMount(async () => {
@@ -162,7 +168,12 @@
       <Features
           features={$preplan.features}
         />
+        {:else if section === "technologies"}
+      <Technologies
+          technologies={$preplan.technology}
+        />
       {/if}
+
     </div>
     <Button
       on:click={() => $dashboardState.createProjectFromPreplanModalOpen = true}

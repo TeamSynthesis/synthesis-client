@@ -13,8 +13,6 @@
   import { Kanban } from "./_components/kanban";
   import { PreplanDialog } from "./_components/preplan-dialog";
 
-  let showPreplan: boolean = true;
-
   let columnItems = [
     {
       id: 1,
@@ -83,16 +81,7 @@
       </div>
 
       <div>
-        <Button
-          variant="ghost"
-          on:click={() => {
-            showPreplan = true;
-          }}
-          size="icon"
-        >
-          <!-- project preparation(pre-plan) -->
-          <X class="h-4 w-4" />
-        </Button>
+    
         <Button variant="ghost" size="icon">
           <MoreHorizontal class="h-4 w-4" />
         </Button>
@@ -108,4 +97,3 @@
   </div>
 </div>
 
-<PreplanDialog bind:open={showPreplan} />

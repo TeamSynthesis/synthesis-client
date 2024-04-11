@@ -9,6 +9,7 @@
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
+  import teamStore from "$lib/stores/team"
 
   export let changePage: (page: keyof typeof pages) => void;
 
@@ -39,6 +40,10 @@
   action={`/@${$page.params.team_slug}/projects/new`.toString()}
   class="flex flex-col gap-4 w-full px-3 sm:px-0 mt-2 -mb-6"
 >
+  <input
+    id="team-id"
+    name="team-id"
+  type="text" class="hidden" value={$teamStore?.id}/>
     <div class="grid gap-1">
       <Label for="description">Project description(prompt)</Label>
       <Textarea

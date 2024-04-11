@@ -64,6 +64,7 @@ export const actions = {
           e.cookies.get("u_id") ?? "",
           e.cookies.get("auth_token") ?? "",
           {
+            AvatarUrl: form.data.avatarUrl ?? "",
             FullName: form.data.fullname,
             Profession: form.data.profession,
             UserName: form.data.username,

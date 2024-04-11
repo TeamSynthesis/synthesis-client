@@ -1,7 +1,7 @@
 <script lang="ts">
     import { MoreHorizontal, Plus} from "lucide-svelte";
     import team from "$lib/stores/team";
-
+    import dashboardState from "$lib/stores/dashboard-state";
     import { Badge } from "$lib/ui/badge";
     import { Button } from "$lib/ui/button";
     import {Card} from "$lib/ui/card";
@@ -29,7 +29,9 @@
       Manage your team members here
     </p>
   </div>
-  <Button>
+  <Button
+    on:click={()=>{$dashboardState.isNewMemberModalOpen =true}}
+  >
     <Plus class="h-4 w-4 mr-2"/>
     Add member
   </Button>
@@ -37,7 +39,7 @@
 
 {#if $team}
   <Card class="flex flex-col p-4 h-full w-full">
-    <Table.Root>
+    <Table.Root class="w-full h-full">
         <Table.Header>
           <Table.Row>
             <Table.Head class="hidden w-[100px] sm:table-cell">
@@ -52,7 +54,7 @@
             </Table.Head>
           </Table.Row>
         </Table.Header>
-        <Table.Body>
+        <Table.Body class="w-full overflow-hidden h-full">
             {#each $team.members as m, i}
           <Table.Row class="border-b border-border">
             <Table.Cell >
@@ -102,3 +104,4 @@
 
   {/if}
 </div>
+

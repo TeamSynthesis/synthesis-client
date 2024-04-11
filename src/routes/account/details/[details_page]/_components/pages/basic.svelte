@@ -78,6 +78,7 @@
 />
 
 <form use:enhance method="post">
+  <input type="hidden" name="avatarUrl" value={$superFormStore.avatarUrl} />
   <div class="grid gap-2">
     <input-group class="flex flex-col text-left space-y-3">
       <div class="flex-center flex-col mb-4">

@@ -9,6 +9,8 @@
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "@sveltejs/kit";
     import { Modal } from "$lib/ui/modal";
+    import * as Select  from "$lib/ui/select";
+    import team from "$lib/stores/team"
 
   let loading: boolean;
   let error: string = "";
@@ -25,6 +27,14 @@
         return;
       }
       //@ts-ignore
+      if(result?.data?.isSuccess){
+        //@ts-ignore
+        $dashboardState.isNewMemberModalOpen = false;
+        //@ts-ignore
+        alert(`Invite code for user ${result?.data?.message.email} is ${result?.data?.message.code} `)
+        return     
+      }
+      //@ts-ignore
       error = result?.data?.message;
       loading = false;
     };
@@ -32,37 +42,56 @@
   //https://leetcode.com/problems/the-skyline-problem/description/
 </script>
 
-<Modal bind:open={$dashboardState.isJoinTeamModalOpen}>
+<Modal bind:open={$dashboardState.isNewMemberModalOpen}>
   <svelte:fragment slot="title">
-    <span> Join a team </span>
+    <span> Add a member </span>
   </svelte:fragment>
   <svelte:fragment slot="description">
-    <span> Enter your team slug and invite ID to continue </span>
+    <span> 
+      Enter the users email and a role to continue  
+    </span>
   </svelte:fragment>
 
   <form
-    action="/join-team"
+    action="/invite-user"
     method="POST"
     use:enhance={onSubmit}
     class="grid gap-2"
   >
     
+    <input type="hidden" name="team-id" value={$team?.id} />
     <div class="grid gap-1">
       <Label class={"ml-2 text-xs text-secondary-foreground"} for="name"
-        >Invite Code</Label
+        >Email</Label
       >
       <Input
-        id="invite-code"
-        name="invite-code"
+        id="email"
+        name="email"
         minlength={2}
         maxlength={64}
-        type="text"
-        placeholder="x-123456"
+        type="email"
+        placeholder="john@doe.com"
         autocapitalize="none"
         autocomplete="off"
         autocorrect="off"
         required
       />
+    </div>
+    <div class="grid gap-1">
+      <Label class={"ml-2 text-xs text-secondary-foreground"} for="name"
+        >Role</Label
+      >
+      <Select.Root required>
+        <Select.Trigger class="w-full">
+          <Select.Value placeholder="Role" />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value="owner">Owner</Select.Item>
+          <Select.Item value="member">Member</Select.Item>
+        </Select.Content>
+      </Select.Root>
+      
+    
     </div>
     <p class="text-sm h-5 text-left w-full text-destructive">
       {error}

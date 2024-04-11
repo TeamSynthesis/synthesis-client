@@ -10,9 +10,9 @@ export const actions = {
   default: async (e: RequestEvent) => {
     const formData = await e.request.formData()
 
+    console.log(formData.get("invite-code")?.toString() ?? "")
     const resp = await joinTeam({
-      inviteID: formData.get("invite-id")?.toString() ?? "",
-      slug: formData.get("slug")?.toString() ?? ""
+      inviteID: formData.get("invite-code")?.toString() ?? "",
     }, e)
 
     if (resp.ok) return fail(400, {

@@ -24,7 +24,7 @@
       "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
   )}
 >
-  {#each Array(4) as project}
+  {#each $team.projects as p}
       <li
         class="rounded-md bg-background flex flex-col border h-36 md:max-w-80 w-full hover:bg-secondary"
       >

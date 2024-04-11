@@ -9,7 +9,9 @@ export const actions = {
 
     const formData = await e.request.formData();
     const prompt = formData.get("prompt")?.toString() ?? "";
-    const resp = await createPreplan({ prompt}, e);
+    const teamId = formData.get("team-id")?.toString() ?? "";
+    
+    const resp = await createPreplan({ prompt, teamId}, e);
     console.log(`/@${e.params.team_slug}/preplans/${resp.val}`)
     if (resp.ok) throw redirect(302, `/@${e.params.team_slug}/preplans/${resp.val}`)
 

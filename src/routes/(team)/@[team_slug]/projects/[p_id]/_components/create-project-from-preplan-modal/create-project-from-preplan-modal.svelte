@@ -19,7 +19,7 @@
     const submit: SubmitFunction = (e) => {
       loading = true;
       return (p) => {
-        
+        console.log(p)
         //@ts-ignore
         if(p.result?.location){
   

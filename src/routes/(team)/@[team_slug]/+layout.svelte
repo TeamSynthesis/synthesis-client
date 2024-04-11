@@ -10,6 +10,7 @@
     import Ably from "ably"
     import { onMount } from "svelte";
     import inbox from "$lib/stores/inbox";
+    import AddMemberModal from "./_components/add-member-modal/add-member-modal.svelte";
 
   export let data: LayoutData;
 
@@ -74,3 +75,4 @@
   {/await}
 {/if}
 <NewProjectModal />
+<AddMemberModal/>

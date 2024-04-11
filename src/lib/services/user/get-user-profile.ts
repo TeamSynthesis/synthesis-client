@@ -44,7 +44,7 @@ type User = {
       "name": string;
       "avatarUrl": string;
     },
-    "roles": string[];
+    "roles": ("owner"|"manager")[];
   }[];
 };
 

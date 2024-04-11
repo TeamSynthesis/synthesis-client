@@ -5,6 +5,7 @@ let dashboardState = writable({
   isNewProjectModalOpen: false,
   isNewTeamModalOpen: false,
   isJoinTeamModalOpen: false,
+  isNewMemberModalOpen: false,
   createProjectFromPreplanModalOpen: false,
 });
 

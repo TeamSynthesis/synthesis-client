@@ -5,25 +5,27 @@ import tsr, { type Result } from "ts-results";
 
 const { Ok, Err } = tsr;
 
-const joinTeam = async (
+const inviteUser = async (
   args: {
-    inviteID: string,
+    teamID:string,
+    email: string,
+    role: string,
 
   },
   e: RequestEvent,
-): Promise<Result<Team, string>> => {
-
-  const form = new FormData()
-  form.set("code", args.inviteID)
-  form.set("userID", e.cookies.get("u_id") ?? "")
-
+): Promise<Result<any, string>> => {
 
   try {
-    const result: APIResponse = await fetch(BASE_API_URL + "/Teams/join", {
+    const result: APIResponse = await fetch(BASE_API_URL + "/Teams/"+args.teamID+"/invite-members", {
       method: "POST",
-      body: form,
+      body: JSON.stringify([{
+        "email": args.email,
+        "role": args.role
+      }]),
+
       headers: {
         Authorization: "Bearer " + e.cookies.get("auth_token"),
+        "Content-Type": "application/json",
       },
     }).then((res) =>
       res.json()
@@ -39,4 +41,4 @@ const joinTeam = async (
   }
 };
 
-export default joinTeam;
+export default inviteUser;

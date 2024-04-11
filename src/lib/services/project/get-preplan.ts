@@ -8,7 +8,7 @@ const { Ok, Err } = tsr;
 const getPreplan = async (args: { processId: string; }, e: RequestEvent): Promise<Result<{data?:Preplan,isSuccess:boolean, message:"pending"|"project generated successfully" }, string>> => {
 
   try {
-    const result: APIResponse = await fetch(BASE_API_URL + `/Projects/generated-project?processId=${args.processId}`, {
+    const result: APIResponse = await fetch(BASE_API_URL + `/Projects/generated-project?planId=${args.processId}`, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + e.cookies.get("auth_token"),
