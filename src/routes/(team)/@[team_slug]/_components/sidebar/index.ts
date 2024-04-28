@@ -17,4 +17,4 @@ type Team = {
 	avatarUrl: string;
 };
 
-export {Sidebar, type Team, type NavLink, Nav };
+export { Sidebar, type Team, type NavLink, Nav };

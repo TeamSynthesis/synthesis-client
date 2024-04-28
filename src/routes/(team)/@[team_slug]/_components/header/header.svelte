@@ -1,10 +1,11 @@
 <script>
-import userStore from "$lib/stores/user";
+  import userStore from "$lib/stores/user";
   import * as Avatar from "$lib/ui/avatar";
   import { Button } from "$lib/ui/button";
   import { page } from "$app/stores";
   import { Bell, Calendar, KanbanIcon, ListTodo, Search } from "lucide-svelte";
-    import { Logo } from "$lib/ui/logo";
+  import { Logo } from "$lib/ui/logo";
+  import dashboardState from "$lib/stores/dashboard-state";
 </script>
 
 <header class="border-b w-full h-[52px] flex justify-between p-2">
@@ -20,10 +21,22 @@ import userStore from "$lib/stores/user";
         <Button variant="ghost" size="icon">
           <ListTodo class="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon">
+        <Button
+          on:click={() => ($dashboardState.projectView = "kanban")}
+          variant={$dashboardState.projectView === "kanban"
+            ? "outline"
+            : "ghost"}
+          size="icon"
+        >
           <KanbanIcon class="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon">
+        <Button
+          variant={$dashboardState.projectView === "calender"
+            ? "outline"
+            : "ghost"}
+          on:click={() => ($dashboardState.projectView = "calender")}
+          size="icon"
+        >
           <Calendar class="h-4 w-4" />
         </Button>
       </div>
@@ -40,9 +53,8 @@ import userStore from "$lib/stores/user";
     </div>
 
     <Avatar.Root class="flex-shrink-0 h-9 w-9">
-      <Avatar.Image src={$userStore.avatarUrl}/>
-      <Avatar.Fallback>{$userStore?.userName?.slice(0, 2)}
-      </Avatar.Fallback>
+      <Avatar.Image src={$userStore.avatarUrl} />
+      <Avatar.Fallback>{$userStore?.userName?.slice(0, 2)}</Avatar.Fallback>
     </Avatar.Root>
   </span>
 </header>

@@ -12,19 +12,19 @@
     Send,
     SidebarClose,
     SidebarOpen,
-    GripVertical
+    GripVertical,
   } from "lucide-svelte";
   import { twMerge } from "tailwind-merge";
 
   let panelOpen: boolean = true;
 </script>
 
-<div class="flex h-full w-full relative ">
+<div class="flex h-full w-full relative">
   <div
-    class={twMerge("shadow-md z-20 h-full absolute sm:relative sm:shadow-none w-64 min-w-64 bg-white border-r border-gray-300",
+    class={twMerge(
+      "shadow-md z-20 h-full absolute sm:relative sm:shadow-none w-64 min-w-64 bg-white border-r border-gray-300",
 
-    !panelOpen && "-translate-x-[100%] !absolute"
-
+      !panelOpen && "-translate-x-[100%] !absolute",
     )}
   >
     <Button
@@ -33,8 +33,7 @@
       variant="outline"
       size="icon"
     >
-        <GripVertical class="h-4 w-4" />
-
+      <GripVertical class="h-4 w-4" />
     </Button>
     <header class="p-2 w-full border-b flex gap-2 justify-between items-center">
       <Input placeholder="Search" class="w-full" />
@@ -77,9 +76,9 @@
             </Avatar.Root>
 
             <div class="flex-1">
-              <h2 class="text-sm font-semibold">Alice</h2>
+              <h2 class="text-sm font-semibold">{t.user.userName}</h2>
               <p class="text-secondary-foreground line-clamp-1 text-xs">
-                Hoorayy!!
+                Yeah, that sounds great
               </p>
             </div>
           </a>

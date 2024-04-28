@@ -6,6 +6,7 @@ let dashboardState = writable({
   isNewTeamModalOpen: false,
   isJoinTeamModalOpen: false,
   isNewMemberModalOpen: false,
+  projectView: "kanban" as "kanban" | "calender",
   createProjectFromPreplanModalOpen: false,
 });
 

@@ -50,6 +50,7 @@ export const actions = {
         setSessionCookies(e, result.val.token, result.val.userId);
         throw redirect(301, "/account/details/basic");
       case "sign-in":
+
     }
   },
 };

@@ -58,11 +58,9 @@
     <div class="items-center flex gap-4">
       <Avatar.Root class="h-11 text-sm w-11">
         <Avatar.Image src={$userStore.avatarUrl} alt={$userStore?.userName} />
-        {#if !$userStore.avatarUrl}
-          <Avatar.Fallback class="capitalize">
-            {$userStore?.userName?.slice(0, 2)}
-          </Avatar.Fallback>
-        {/if}
+        <Avatar.Fallback class="capitalize">
+          {$userStore?.userName?.slice(0, 2)}
+        </Avatar.Fallback>
       </Avatar.Root>
       <div class="flex flex-col">
         <h1 class="sm:text-lg text-md mb-0 font-medium">
@@ -85,8 +83,9 @@
     class="mt-6 grid grid-cols-2 md:grid-cols-4 justify-center w-full items-center gap-4"
   >
     {#each quickInsights as i}
-      {@const color = !i.limit ?"bg-green-600 text-green-600" : 
-        i.used / i?.limit > 0.8
+      {@const color = !i.limit
+        ? "bg-green-600 text-green-600"
+        : i.used / i?.limit > 0.8
           ? "bg-red-600 text-red-600"
           : i.used / i?.limit > 0.5
             ? "bg-amber-600 text-amber-600"
@@ -105,7 +104,8 @@
           <span class={twMerge("font-bold", color, "bg-transparent")}>
             {i.used}{i.limit == null ? "" : `/${i.limit}`}
           </span>
-      </a>
+        </div></a
+      >
     {/each}
   </div>
 
@@ -116,7 +116,7 @@
       <div>Project issues</div>
     </div>
     <p class="p-2 text-xs">
-     Yaay, there are no pending issues in <b>{$teamStore?.name}</b>. 🎉
+      Yaay, there are no pending issues in <b>{$teamStore?.name}</b>. 🎉
     </p>
   </div>
 </main>

@@ -1,5 +1,7 @@
 <script lang="ts">
-  import twColors from "tailwindcss/colors";
+  import tw from "tailwindcss/colors";
+
+  const twColors: any = tw;
 
   export let colorPalette: {
     primary: string;
