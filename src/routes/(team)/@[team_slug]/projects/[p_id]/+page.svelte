@@ -45,6 +45,8 @@
 
   let isResultsOpen: boolean = false;
 
+  export let data: PageData;
+
   import {
     Chart as ChartJS,
     Title,
@@ -57,6 +59,7 @@
     type ChartData,
   } from "chart.js";
   import CalenderView from "./_components/calender-view/calender-view.svelte";
+  import type { PageData } from "./$types";
 
   ChartJS.register(
     Title,
@@ -68,7 +71,9 @@
     CategoryScale,
   );
 
-  export const data: ChartData = {
+  console.log("dto", data.report?.data.dailyTaskCompletions);
+
+  const _data: ChartData = {
     labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     datasets: [
       {
@@ -91,7 +96,7 @@
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: [28, 48, 40, 19, 86, 27, 90],
+        data: Object.values(data.report?.data?.dailyTaskCompletions[0] ?? {}),
       },
     ],
   };
@@ -175,7 +180,9 @@
         <Card>
           <CardHeader>
             <CardDescription>Total<br /> Tasks</CardDescription>
-            <CardTitle>234</CardTitle>
+            <CardTitle>
+              {data.report?.data?.totalTasks ?? 0}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <PackageIcon class="h-8 w-8 text-gray-500 dark:text-gray-400" />
@@ -184,7 +191,9 @@
         <Card>
           <CardHeader>
             <CardDescription>Completed<br />Tasks</CardDescription>
-            <CardTitle>189</CardTitle>
+            <CardTitle>
+              {data.report?.data?.completedTasksCount ?? 0}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <CheckCircleIcon class="h-8 w-8 text-green-500" />
@@ -193,7 +202,9 @@
         <Card>
           <CardHeader>
             <CardDescription>Overdue<br />Projects</CardDescription>
-            <CardTitle>45</CardTitle>
+            <CardTitle>
+              {data.report?.data?.overdueTasks ?? 0}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <AlertCircleIcon class="h-8 w-8 text-red-500" />
@@ -202,7 +213,9 @@
         <Card>
           <CardHeader>
             <CardDescription>Team<br />Productivity</CardDescription>
-            <CardTitle>84%</CardTitle>
+            <CardTitle>
+              {(data.report?.data?.teamProductivity ?? 0) * 100} %
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <BarChartIcon class="h-8 w-8 text-gray-500 dark:text-gray-400" />
