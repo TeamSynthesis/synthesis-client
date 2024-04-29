@@ -42,13 +42,13 @@
 <aside
   class={cn(
     "flex bg-background flex-col h-full border-r",
-    $dashboardState.isSidebarCollapsed ? "w-[52px]" : "w-64 min-w-64"
+    $dashboardState.isSidebarCollapsed ? "w-[52px]" : "w-64 min-w-64",
   )}
 >
   <div
     class={cn(
       "flex items-center justify-center min-h-[52px]",
-      $dashboardState.isSidebarCollapsed ? "h-[52px]" : "px-2"
+      $dashboardState.isSidebarCollapsed ? "h-[52px]" : "px-2",
     )}
   >
     <TeamSwitcher isCollapsed={$dashboardState.isSidebarCollapsed} />
@@ -57,7 +57,7 @@
   <div
     class={cn(
       "flex items-center justify-center py-2 h-[52px]",
-      $dashboardState.isSidebarCollapsed ? "h-[52px]" : "px-2"
+      $dashboardState.isSidebarCollapsed ? "h-[52px]" : "px-2",
     )}
   >
     <Button
@@ -109,7 +109,7 @@
       },
       {
         title: "Preplans",
-        label: `${$teamStore?.projects?.length || 0}`,
+        label: `${$teamStore?.prePlans?.length || 0}`,
         icon: Puzzle,
         active: page === "preplans",
         href: `/@${$pageStore.params.team_slug}/preplans`,
