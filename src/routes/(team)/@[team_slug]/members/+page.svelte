@@ -76,7 +76,7 @@
                 {m.user.email}
               </Table.Cell>
               <Table.Cell class="hidden md:table-cell">
-                <Badge>{m.roles[0]}</Badge>
+                <Badge>{m.roles[0] || "owner"}</Badge>
               </Table.Cell>
               <Table.Cell>
                 <DropdownMenu.Root>

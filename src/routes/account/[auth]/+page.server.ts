@@ -4,6 +4,8 @@ import { superValidate } from "sveltekit-superforms/server";
 import { z } from "zod";
 import signUp from "$lib/services/account/sign-up";
 import setSessionCookies from "../_helpers/set-session-cookies";
+import signIn from "$lib/services/account/sign-in";
+import { getUserProfile } from "$lib/services/user/get-user-profile";
 
 const emailAuthSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -50,6 +52,19 @@ export const actions = {
         setSessionCookies(e, result.val.token, result.val.userId);
         throw redirect(301, "/account/details/basic");
       case "sign-in":
+        const result2 = await signIn(form.data.email, form.data.password);
+
+        if (result2.err) {
+          form.errors._errors = [result2.val];
+          return fail(400, {
+            form,
+          });
+        }
+        setSessionCookies(e, result2.val.token, result2.val.userId);
+        const r = await getUserProfile(e);
+
+        if (r.ok === true)
+          throw redirect(301, `/@${r.val.memberProfiles[0].team.slug}/overview`);
 
     }
   },

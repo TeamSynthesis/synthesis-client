@@ -20,6 +20,7 @@ const signUp = async (
     }).then((res) => res.json());
     console.log(result)
 
+    //@ts-ignore
     if (!result.isSuccess) return Err(result.errors[0]);
     return Ok({ token: result.data.token, userId: result.data.userId });
   } catch (e) {
