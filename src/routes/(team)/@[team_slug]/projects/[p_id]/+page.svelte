@@ -45,8 +45,6 @@
 
   let isResultsOpen: boolean = false;
 
-  export let data: PageData;
-
   import {
     Chart as ChartJS,
     Title,
@@ -71,9 +69,7 @@
     CategoryScale,
   );
 
-  console.log("dto", data.report?.data.dailyTaskCompletions);
-
-  const _data: ChartData = {
+  export const data: ChartData = {
     labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     datasets: [
       {
@@ -96,7 +92,7 @@
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: Object.values(data.report?.data?.dailyTaskCompletions[0] ?? {}),
+        data: [28, 48, 40, 19, 86, 27, 90],
       },
     ],
   };
